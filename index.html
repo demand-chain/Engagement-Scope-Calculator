@@ -1,0 +1,2849 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Demand Chain | Engagement Scoping &amp; Estimate</title>
+<style>
+:root{
+  --dc-red:#912121;
+  --dc-red-dark:#6f1919;
+  --dc-grey-dark:#323232;
+  --dc-grey:#595959;
+  --dc-grey-light:#EAEAEA;
+  --dc-navy:#002060;
+  --dc-cyan:#00B0F0;
+  --dc-bg:#F7F6F5;
+  --dc-white:#ffffff;
+  --dc-good:#2E7D32;
+  --dc-warn:#B8860B;
+  --dc-bad:#B00020;
+  --radius:10px;
+  --shadow:0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.06);
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;background:var(--dc-bg);color:var(--dc-grey-dark);font-family:Arial, Helvetica, sans-serif;font-size:14px;}
+a{color:var(--dc-navy);}
+.app{max-width:1280px;margin:0 auto;padding:0 20px 60px;}
+
+/* ---------- Header ---------- */
+.topbar{background:var(--dc-white);border-bottom:3px solid var(--dc-red);position:sticky;top:0;z-index:50;box-shadow:var(--shadow);}
+.topbar-inner{max-width:1280px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:12px 20px;gap:16px;flex-wrap:wrap;}
+.brand{display:flex;align-items:center;gap:14px;}
+.brand img{height:34px;display:block;}
+.brand .divider{width:1px;height:28px;background:var(--dc-grey-light);}
+.brand .title{font-size:15px;color:var(--dc-grey);font-weight:bold;}
+.brand .title small{display:block;font-size:11px;color:var(--dc-grey);font-weight:normal;}
+.topbar-actions{display:flex;gap:8px;flex-wrap:wrap;}
+
+button{font-family:inherit;cursor:pointer;}
+.btn{border:1px solid var(--dc-grey-light);background:var(--dc-white);color:var(--dc-grey-dark);padding:9px 16px;border-radius:var(--radius);font-size:13px;font-weight:bold;transition:all .12s ease;}
+.btn:hover{border-color:var(--dc-grey);}
+.btn-primary{background:var(--dc-red);border-color:var(--dc-red);color:#fff;}
+.btn-primary:hover{background:var(--dc-red-dark);}
+.btn-ghost{background:transparent;border-color:transparent;color:var(--dc-grey);}
+.btn-ghost:hover{background:var(--dc-grey-light);}
+.btn-sm{padding:5px 10px;font-size:12px;border-radius:7px;}
+
+/* ---------- Tabs ---------- */
+.tabs{display:flex;gap:4px;margin:22px 0 18px;border-bottom:2px solid var(--dc-grey-light);flex-wrap:wrap;}
+.tab{padding:11px 18px;font-size:13.5px;font-weight:bold;color:var(--dc-grey);border-bottom:3px solid transparent;background:none;border-left:none;border-right:none;border-top:none;margin-bottom:-2px;display:flex;align-items:center;gap:7px;}
+.tab.active{color:var(--dc-red);border-bottom-color:var(--dc-red);}
+.tab:hover{color:var(--dc-red-dark);}
+.tab .dot{width:7px;height:7px;border-radius:50%;background:var(--dc-grey-light);}
+.tab .dot.on{background:var(--dc-good);}
+
+.panel{display:none;}
+.panel.active{display:block;animation:fadein .15s ease;}
+@keyframes fadein{from{opacity:0;transform:translateY(2px);}to{opacity:1;transform:none;}}
+
+/* ---------- Cards / layout ---------- */
+.card{background:var(--dc-white);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px 22px;margin-bottom:18px;}
+.card h2{font-size:15px;margin:0 0 4px;color:var(--dc-grey-dark);}
+.card .sub{color:var(--dc-grey);font-size:12.5px;margin:0 0 16px;}
+.grid{display:grid;gap:14px;}
+.grid.cols-2{grid-template-columns:1fr 1fr;}
+.grid.cols-3{grid-template-columns:1fr 1fr 1fr;}
+.grid.cols-4{grid-template-columns:repeat(4,1fr);}
+@media (max-width:820px){.grid.cols-2,.grid.cols-3,.grid.cols-4{grid-template-columns:1fr;}}
+
+label{display:block;font-size:11.5px;font-weight:bold;color:var(--dc-grey);margin-bottom:4px;letter-spacing:.2px;}
+input[type=text],input[type=number],input[type=date],select,textarea{
+  width:100%;padding:8px 10px;border:1px solid #D8D5D2;border-radius:7px;font-size:13.5px;font-family:inherit;background:#fff;color:var(--dc-grey-dark);
+}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--dc-red);box-shadow:0 0 0 3px rgba(145,33,33,.12);}
+.field{margin-bottom:2px;}
+.hint{font-size:11px;color:var(--dc-grey);margin-top:3px;}
+
+/* ---------- Tables ---------- */
+table{width:100%;border-collapse:collapse;font-size:13px;}
+th{text-align:left;font-size:11px;color:var(--dc-grey);text-transform:none;padding:8px 8px;border-bottom:2px solid var(--dc-grey-light);white-space:nowrap;}
+td{padding:6px 8px;border-bottom:1px solid #EFEDEB;vertical-align:middle;}
+tr:hover td{background:#FBFAF9;}
+.tbl-wrap{overflow-x:auto;}
+td input[type=text],td input[type=number],td select{padding:6px 8px;font-size:13px;min-width:70px;}
+.num{text-align:right;font-variant-numeric:tabular-nums;}
+.editable{background:#FFF7E8;border-color:#EED9A8 !important;}
+
+.pill{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:bold;}
+.pill-good{background:#E7F3E8;color:var(--dc-good);}
+.pill-warn{background:#FCF1DC;color:var(--dc-warn);}
+.pill-bad{background:#FBE6E9;color:var(--dc-bad);}
+.pill-track{background:var(--dc-grey-light);color:var(--dc-grey-dark);}
+
+/* ---------- KPI ---------- */
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px;}
+@media (max-width:820px){.kpis{grid-template-columns:repeat(2,1fr);}}
+.kpi{background:var(--dc-white);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px 18px;border-top:3px solid var(--dc-red);}
+.kpi .label{font-size:11px;color:var(--dc-grey);font-weight:bold;margin-bottom:6px;}
+.kpi .value{font-size:22px;font-weight:bold;color:var(--dc-grey-dark);}
+.kpi .value.small{font-size:16px;}
+.kpi.navy{border-top-color:var(--dc-navy);}
+.kpi.cyan{border-top-color:var(--dc-cyan);}
+.kpi.grey{border-top-color:var(--dc-grey);}
+
+/* ---------- Phase colors ---------- */
+.phase-swatch{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:6px;vertical-align:-1px;}
+.legend{display:flex;gap:16px;flex-wrap:wrap;margin-top:10px;font-size:12px;color:var(--dc-grey);}
+
+/* buttons row */
+.row-actions{display:flex;gap:8px;margin-top:14px;}
+.remove-btn{color:var(--dc-red);background:none;border:none;font-size:16px;font-weight:bold;padding:2px 8px;border-radius:6px;}
+.remove-btn:hover{background:#FBE6E9;}
+
+.section-title{font-size:12px;font-weight:bold;color:var(--dc-grey);text-transform:uppercase;letter-spacing:.6px;margin:22px 0 8px;}
+.footnote{font-size:11px;color:var(--dc-grey);margin-top:10px;}
+
+.two-col-layout{display:grid;grid-template-columns:1.3fr 1fr;gap:18px;align-items:start;}
+@media (max-width:980px){.two-col-layout{grid-template-columns:1fr;}}
+
+svg text{font-family:Arial, Helvetica, sans-serif;}
+
+.only-print{display:none;}
+
+.checkbox-row{display:flex;align-items:center;gap:8px;}
+.checkbox-row input[type=checkbox]{width:16px;height:16px;}
+
+.badge{background:var(--dc-grey-light);color:var(--dc-grey);font-size:10.5px;padding:2px 7px;border-radius:5px;font-weight:bold;}
+.badge-red{background:#FBE6E9;color:var(--dc-red);}
+
+.storage-note{font-size:11.5px;color:var(--dc-grey);background:#FBF9F5;border:1px solid #EFE9DE;border-radius:8px;padding:8px 12px;margin-bottom:14px;}
+
+/* ---------- Weekly timeline grid ---------- */
+#weeklyGridTable{border-collapse:collapse;font-size:12px;user-select:none;}
+#weeklyGridTable th,#weeklyGridTable td{padding:3px 4px;text-align:center;border:1px solid #EFEDEB;white-space:nowrap;}
+#weeklyGridTable th.wg-resource,#weeklyGridTable td.wg-resource{position:sticky;left:0;background:#fff;z-index:2;text-align:left;min-width:150px;padding:6px 8px;border-right:2px solid var(--dc-grey-light);}
+#weeklyGridTable th.wg-phase{color:#fff;font-size:10.5px;font-weight:bold;padding:4px 2px;}
+#weeklyGridTable th.wg-week{font-size:10px;color:var(--dc-grey);font-weight:normal;min-width:44px;}
+#weeklyGridTable td.wg-cell input{width:40px;padding:3px 2px;text-align:center;font-size:12px;border:1px solid #E3E0DC;border-radius:4px;cursor:cell;}
+#weeklyGridTable td.wg-cell input:focus{outline:none;border-color:var(--dc-red);box-shadow:0 0 0 2px rgba(145,33,33,.15);}
+#weeklyGridTable td.wg-total,#weeklyGridTable th.wg-total{font-weight:bold;background:#FBFAF9;position:sticky;right:0;}
+#weeklyGridTable tfoot td{font-weight:bold;background:#F7F6F5;}
+#weeklyGridTable.wg-dragging{cursor:cell;}
+#weeklyGridTable td.wg-cell.wg-highlight{background:#FBE6E9;}
+#weeklyGridTable td.wg-cell.wg-highlight input{border-color:var(--dc-red);background:#fff;box-shadow:0 0 0 2px rgba(145,33,33,.18);}
+
+/* ---------- Track cards (business line selector) ---------- */
+.track-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:6px;}
+@media (max-width:900px){.track-cards{grid-template-columns:1fr;}}
+.track-card{border:2px solid var(--dc-grey-light);border-radius:var(--radius);padding:16px 16px;cursor:pointer;background:#fff;transition:all .12s ease;}
+.track-card:hover{border-color:#d8b9b9;}
+.track-card.selected{border-color:var(--dc-red);background:#FCF6F6;}
+.track-card .tc-label{font-size:10.5px;color:var(--dc-grey);font-weight:bold;text-transform:uppercase;letter-spacing:.4px;}
+.track-card .tc-title{font-size:16px;font-weight:bold;color:var(--dc-grey-dark);margin:2px 0 6px;}
+.track-card .tc-desc{font-size:12px;color:var(--dc-grey);line-height:1.4;}
+.track-card .tc-radio{float:right;width:16px;height:16px;border-radius:50%;border:2px solid var(--dc-grey-light);}
+.track-card.selected .tc-radio{border-color:var(--dc-red);background:radial-gradient(circle,var(--dc-red) 0 40%, transparent 42%);}
+
+.discovery-band{background:linear-gradient(135deg,#912121,#6f1919);color:#fff;border-radius:var(--radius);padding:16px 20px;margin-bottom:18px;}
+.discovery-band .dh{font-size:11px;text-transform:uppercase;letter-spacing:.6px;opacity:.85;font-weight:bold;}
+.discovery-band .dt{font-size:16px;font-weight:bold;margin:2px 0 8px;}
+.discovery-band .dgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
+@media (max-width:900px){.discovery-band .dgrid{grid-template-columns:1fr 1fr;}}
+.discovery-band .dfield label{color:rgba(255,255,255,.85);}
+.discovery-band .dfield input,.discovery-band .dfield select{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.3);color:#fff;}
+.discovery-band .dfield input::placeholder{color:rgba(255,255,255,.6);}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <img src="data:image/png;base64,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" alt="Demand Chain">
+      <div class="divider"></div>
+      <div class="title">Engagement Scoping &amp; Estimate<small>Project · Managed Services · Ad-Hoc T&amp;M</small></div>
+    </div>
+    <div class="topbar-actions">
+      <button class="btn btn-ghost btn-sm" id="btnReset">Reset</button>
+      <button class="btn btn-ghost btn-sm" id="btnSave">Save</button>
+      <button class="btn btn-primary" id="btnExport">⬇ PDF</button>
+      <button class="btn btn-primary" id="btnExportWord">⬇ Word</button>
+    </div>
+  </div>
+</div>
+
+<div class="app">
+
+  <div class="tabs" id="tabs">
+    <button class="tab active" data-tab="project">Project Info</button>
+    <button class="tab" data-tab="rates">Rate Card</button>
+    <button class="tab" data-tab="track-project"><span class="dot" id="dot-project"></span>Project</button>
+    <button class="tab" data-tab="track-ms"><span class="dot" id="dot-ms"></span>Managed Services</button>
+    <button class="tab" data-tab="track-tm"><span class="dot" id="dot-tm"></span>Ad-Hoc T&amp;M</button>
+    <button class="tab" data-tab="summary">Summary &amp; Export</button>
+  </div>
+
+  <!-- ================= PROJECT INFO ================= -->
+  <div class="panel active" id="panel-project">
+
+    <div class="card">
+      <h2>Engagement track</h2>
+      <p class="sub">Every engagement enters through paid discovery. Discovery output determines which track the client joins — pick the recommended track below. This drives which estimator tab is treated as primary in the Summary and PDF export (all three remain available if you're blending tracks).</p>
+      <div class="track-cards" id="trackCards"></div>
+    </div>
+
+    <div class="discovery-band">
+      <div class="dh">Mandatory entry gate</div>
+      <div class="dt">Paid discovery</div>
+      <div class="dgrid">
+        <div class="dfield"><label>Discovery fee ($)</label><input type="number" id="disc_fee" min="0"></div>
+        <div class="dfield"><label>Sessions (1–3)</label><input type="number" id="disc_sessions" min="1" max="3"></div>
+        <div class="dfield"><label>Credits toward</label><select id="disc_credit_display" disabled></select></div>
+        <div class="dfield"><label>Status</label><select id="disc_status">
+          <option>Not started</option><option>Fee collected</option><option>Sessions complete</option><option>Report delivered</option>
+        </select></div>
+      </div>
+      <div class="dgrid" style="margin-top:14px;padding-top:14px;border-top:1px solid rgba(255,255,255,.25);">
+        <div class="dfield"><label>Delivery hours</label><input type="number" id="disc_hours" min="0"></div>
+        <div class="dfield"><label>Delivery rate class</label><select id="disc_rateclass"></select></div>
+        <div class="dfield"><label>Delivery cost</label><div style="font-size:17px;font-weight:bold;padding-top:6px;" id="disc_cost_display">$0</div></div>
+        <div class="dfield"><label>Margin (target 60%)</label><div style="font-size:17px;font-weight:bold;padding-top:6px;" id="disc_margin_display">0%</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Project information</h2>
+      <p class="sub">This populates the header of your estimate and the exported PDF.</p>
+      <div class="grid cols-3">
+        <div class="field"><label>Account / Client</label><input type="text" id="pi_account" placeholder="Acme Corporation"></div>
+        <div class="field"><label>Project / engagement name</label><input type="text" id="pi_project" placeholder="Sales Cloud Transformation"></div>
+        <div class="field"><label>Opportunity URL</label><input type="text" id="pi_oppurl" placeholder="https://..."></div>
+        <div class="field"><label>Sales owner</label><input type="text" id="pi_salesowner" placeholder="Name"></div>
+        <div class="field"><label>Sales engineer</label><input type="text" id="pi_se" placeholder="Name"></div>
+        <div class="field"><label>Scope approver</label><input type="text" id="pi_scopeappr" placeholder="Name"></div>
+        <div class="field"><label>Financial approver</label><input type="text" id="pi_finappr" placeholder="Name"></div>
+        <div class="field"><label>Legal approver</label><input type="text" id="pi_legalappr" placeholder="Name"></div>
+        <div class="field"><label>Anticipated start date</label><input type="date" id="pi_startdate"></div>
+      </div>
+    </div>
+
+    <div class="storage-note">Your inputs are saved automatically to this browser tab's project storage. Use <b>Save</b> any time to force a save, or <b>Download PDF</b> to produce a branded, client-ready export.</div>
+  </div>
+
+  <!-- ================= RATE CARD ================= -->
+  <div class="panel" id="panel-rates">
+    <div class="card">
+      <h2>Rate card</h2>
+      <p class="sub">Cost is DC's internal loaded cost per hour and is locked for salaried rate classes. Price/hr is the negotiated bill rate — edit it for this project only. Margin recalculates automatically. Used by the Project, Managed Services, and Ad-Hoc T&amp;M tracks.</p>
+      <div class="tbl-wrap">
+        <table id="ratesTable">
+          <thead>
+            <tr>
+              <th>Rate class</th>
+              <th class="num">Cost / hr</th>
+              <th class="num">Price / hr</th>
+              <th class="num">Margin</th>
+            </tr>
+          </thead>
+          <tbody id="ratesBody"></tbody>
+        </table>
+      </div>
+      <div class="row-actions">
+        <button class="btn btn-sm btn-ghost" id="btnRatesDefault">Restore default rate card</button>
+      </div>
+      <p class="footnote">Rates marked with elevated margin thresholds may require approval — see the Summary tab for the current project's approval status. Cost/hr fields with a lock icon are fixed salaried costs and can't be edited.</p>
+    </div>
+  </div>
+
+  <!-- ================= PROJECT TRACK ================= -->
+  <div class="panel" id="panel-track-project">
+    <div class="card" style="border-left:4px solid var(--dc-red);">
+      <span class="badge badge-red">SCOPED DELIVERABLE</span>
+      <h2 style="margin-top:8px;">Project</h2>
+      <p class="sub">Project lead + specialist team, assembled per engagement. SOW-bound with phased, milestone-gated delivery. Close and handoff includes documentation and client sign-off.</p>
+    </div>
+
+    <div class="card">
+      <h2>Pricing model</h2>
+      <p class="sub">Choose how this Project is priced. Both options share the same phase timeline, KPIs, and export below.</p>
+      <div class="track-cards" id="projectModeCards" style="grid-template-columns:1fr 1fr;"></div>
+    </div>
+
+    <div class="card">
+      <h2>Phase &amp; sprint durations</h2>
+      <p class="sub">Sets the calendar timeline used for the infographic and phase-based pricing. Start date comes from Project Info.</p>
+      <div class="grid cols-4">
+        <div class="field"><label>Planning (weeks)</label><input type="number" min="0" id="ph_planning_wk" value="1"></div>
+        <div class="field"><label>Discovery (weeks)</label><input type="number" min="0" id="ph_discovery_wk" value="2"></div>
+        <div class="field"><label># of P&amp;B sprints</label><input type="number" min="0" id="ph_pb_sprints" value="6"></div>
+        <div class="field"><label>Sprint length (weeks)</label><input type="number" min="1" id="ph_sprint_len" value="2"></div>
+        <div class="field"><label>Deploy (weeks)</label><input type="number" min="0" id="ph_deploy_wk" value="1"></div>
+        <div class="field"><label>Wrap-up (weeks)</label><input type="number" min="0" id="ph_wrapup_wk" value="1"></div>
+      </div>
+    </div>
+
+    <div class="card" id="hourlyDetailModeCard">
+      <h2>Hours entry</h2>
+      <p class="sub">Choose how you enter hours for the hourly team below. Weekly timeline generates its columns directly from the phase &amp; sprint durations above — resize a phase there and the grid updates to match.</p>
+      <div class="track-cards" id="hourlyDetailModeCards" style="grid-template-columns:1fr 1fr;"></div>
+    </div>
+
+    <div class="card" id="hourlyTeamCard">
+      <h2>Project team</h2>
+      <p class="sub" id="hourlyTeamCardSub">Add each resource, pick a rate class, then allocate their hours across phases.</p>
+      <div class="tbl-wrap">
+        <table id="teamTable">
+          <thead>
+            <tr>
+              <th style="min-width:120px;">DC role</th>
+              <th style="min-width:140px;">Rate class</th>
+              <th class="num">Planning hrs</th>
+              <th class="num">Discovery hrs</th>
+              <th class="num">P&amp;B hrs</th>
+              <th class="num">Deploy hrs</th>
+              <th class="num">Wrap-up hrs</th>
+              <th class="num">Total hrs</th>
+              <th class="num">Cost/hr</th>
+              <th class="num">Price/hr</th>
+              <th class="num">Line cost</th>
+              <th class="num">Line price</th>
+              <th class="num">Margin</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="teamBody"></tbody>
+        </table>
+      </div>
+      <div class="row-actions">
+        <button class="btn btn-sm btn-primary" id="btnAddResource">+ Add resource</button>
+      </div>
+    </div>
+
+    <div class="card" id="weeklyGridCard" style="display:none;">
+      <h2>Weekly timeline</h2>
+      <p class="sub">Click and drag across a resource's row to paint the same hours across multiple weeks — like a fill handle. Type into a single cell for an exact number. Totals roll up into the phase hours above automatically.</p>
+      <div class="tbl-wrap">
+        <table id="weeklyGridTable"><thead id="weeklyGridHead"></thead><tbody id="weeklyGridBody"></tbody><tfoot id="weeklyGridFoot"></tfoot></table>
+      </div>
+      <div class="legend" id="weeklyGridLegend"></div>
+    </div>
+
+    <div class="card" id="fixedTeamCard" style="display:none;">
+      <h2>Deliverables (Fixed Bid)</h2>
+      <p class="sub">Add each functionality or deliverable you're bidding at a fixed price. Estimate internal effort (hours + rate class) so cost and margin still track, then set the client-facing fixed price per line — it doesn't have to equal hours × rate.</p>
+      <div class="tbl-wrap">
+        <table id="fixedTable">
+          <thead>
+            <tr>
+              <th style="min-width:160px;">Functionality</th>
+              <th style="min-width:200px;">Deliverable</th>
+              <th style="min-width:110px;">Phase</th>
+              <th class="num">Est. hours</th>
+              <th style="min-width:150px;">Rate class</th>
+              <th class="num">Line cost</th>
+              <th class="num" style="min-width:130px;">Fixed price</th>
+              <th class="num">Margin</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="fixedBody"></tbody>
+        </table>
+      </div>
+      <div class="row-actions">
+        <button class="btn btn-sm btn-primary" id="btnAddFixedLine">+ Add functionality</button>
+      </div>
+    </div>
+
+    <div class="card" id="rangeCard">
+      <h2>Estimate range</h2>
+      <p class="sub">Set a cost and hours range as a percentage above/below your point estimate — useful for ROM-style ranges before scope is fully locked. Margin is recalculated at each cost extreme against the quoted project price, so it moves opposite to cost: lower cost = higher margin, higher cost = lower margin.</p>
+      <div class="grid cols-4">
+        <div class="field"><label>Cost — low (%)</label><input type="number" min="0" max="100" id="range_cost_low" value="10"></div>
+        <div class="field"><label>Cost — high (%)</label><input type="number" min="0" max="200" id="range_cost_high" value="20"></div>
+        <div class="field"><label>Hours — low (%)</label><input type="number" min="0" max="100" id="range_hours_low" value="10"></div>
+        <div class="field"><label>Hours — high (%)</label><input type="number" min="0" max="200" id="range_hours_high" value="20"></div>
+      </div>
+    </div>
+
+    <div class="kpis" id="projectKpis"></div>
+    <div class="card" style="margin-bottom:18px;">
+      <div class="tbl-wrap">
+        <table>
+          <thead>
+            <tr><th></th><th class="num">Low estimate</th><th class="num">High estimate</th></tr>
+          </thead>
+          <tbody id="projectRangeTable"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Timeline infographic</h2>
+      <p class="sub">Auto-generated from the phase durations above. Included in the PDF export.</p>
+      <div id="ganttWrap"></div>
+    </div>
+  </div>
+
+  <!-- ================= MANAGED SERVICES TRACK ================= -->
+  <div class="panel" id="panel-track-ms">
+    <div class="card" style="border-left:4px solid var(--dc-navy);">
+      <span class="badge">RECURRING ENGAGEMENT</span>
+      <h2 style="margin-top:8px;">Managed Services (Subscription)</h2>
+      <p class="sub">Named engagement lead. Retainer or sprint cadence with QBR-driven renewal. May spawn a Project-track engagement for defined scope work.</p>
+    </div>
+
+    <div class="card">
+      <h2>Engagement details</h2>
+      <div class="grid cols-4">
+        <div class="field"><label>Named engagement lead</label><input type="text" id="ms_lead" placeholder="Name"></div>
+        <div class="field"><label>Cadence</label>
+          <select id="ms_cadence"><option>Retainer</option><option>Sprint</option></select>
+        </div>
+        <div class="field"><label>Contract length (months)</label>
+          <select id="ms_months"><option value="6">6</option><option value="12" selected>12</option><option value="24">24</option><option value="custom">Custom…</option></select>
+        </div>
+        <div class="field" id="ms_months_custom_wrap" style="display:none;"><label>Custom months</label><input type="number" min="1" id="ms_months_custom" value="12"></div>
+        <div class="field"><label>QBR cadence</label>
+          <select id="ms_qbr"><option>Quarterly</option><option>Monthly</option><option>Semi-annual</option></select>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Delivery mix &amp; committed hours per week</h2>
+      <p class="sub">Pick which rate card class backs each delivery tier — cost and price/hr are pulled live from the Rate Card's "Managed Svcs" columns. Contract term then applies DC's standard commitment discount (6 mo = full rate, 12 mo ≈ 4% off, 24 mo ≈ 12% off). Standard weekly commitments are 5, 10, 15, 20, 25, 30, or 40 hours; anything else needs approval.</p>
+      <div class="tbl-wrap">
+        <table>
+          <thead>
+            <tr><th>Delivery tier</th><th style="min-width:170px;">Rate class</th><th class="num">Hrs / week</th><th class="num">Rate / hr</th><th class="num">Cost / hr</th><th class="num">Weekly revenue</th><th class="num">Margin</th></tr>
+          </thead>
+          <tbody id="msTiersBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="kpis" id="msKpis"></div>
+    <p class="footnote">Discovery fee credits toward the first month of subscription, reducing the month-1 invoice.</p>
+  </div>
+
+  <!-- ================= AD-HOC T&M TRACK ================= -->
+  <div class="panel" id="panel-track-tm">
+    <div class="card" style="border-left:4px solid var(--dc-grey);">
+      <span class="badge">REPLACES UNSTRUCTURED T&amp;M</span>
+      <h2 style="margin-top:8px;">Ad-Hoc T&amp;M (Client Portal)</h2>
+      <p class="sub">FIFO queue with SLA-driven response tiers, fulfilled from the shared resource pool — no dedicated resource assigned. This track replaces all unstructured T&amp;M and ad-hoc engagements; any exception requires DC Leadership approval.</p>
+    </div>
+
+    <div class="card">
+      <h2>Request volume &amp; approval</h2>
+      <div class="grid cols-3">
+        <div class="field"><label>Est. requests / month</label><input type="number" min="0" id="tm_requests" value="4"></div>
+        <div class="field"><label>Approval (if exception)</label><input type="text" id="tm_approval" placeholder="DC Leadership sign-off name"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Estimated block of hours</h2>
+      <p class="sub">Mix as many SLA tiers as the quote needs — each line picks its own response tier, priced from the shared resource pool at that tier's rate multiplier. No named lead, billed as delivered.</p>
+      <div class="tbl-wrap">
+        <table id="tmTable">
+          <thead>
+            <tr>
+              <th style="min-width:140px;">Rate class</th>
+              <th style="min-width:120px;">SLA tier</th>
+              <th class="num">Est. hours</th>
+              <th class="num">Cost/hr</th>
+              <th class="num">Price/hr (w/ SLA)</th>
+              <th class="num">Line cost</th>
+              <th class="num">Line price</th>
+              <th class="num">Margin</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="tmBody"></tbody>
+        </table>
+      </div>
+      <div class="row-actions">
+        <button class="btn btn-sm btn-primary" id="btnAddTmLine">+ Add line</button>
+      </div>
+    </div>
+
+    <div class="kpis" id="tmKpis"></div>
+    <p class="footnote">Discovery fee credits toward the SLA tier setup fee or first queue credit, applied at portal onboarding.</p>
+  </div>
+
+  <!-- ================= SUMMARY & EXPORT ================= -->
+  <div class="panel" id="panel-summary">
+
+    <div class="card">
+      <h2>Engagement rollup</h2>
+      <p class="sub">Combined view across every service line on this engagement. Uncheck a row to exclude it from the totals — this is independent from the export checkboxes below, so you can leave a line out of the rollup while still including it in the PDF/Word export (or vice versa).</p>
+      <div class="tbl-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th style="width:40px;">Incl.</th>
+              <th>Service</th>
+              <th class="num">Price</th>
+              <th class="num">Cost</th>
+              <th class="num">Hours</th>
+              <th class="num">Margin</th>
+            </tr>
+          </thead>
+          <tbody id="rollupBody"></tbody>
+        </table>
+      </div>
+      <p class="footnote">Discovery's cost is estimated from its delivery hours × rate class, set on the Project Info tab — target margin is 60%, same as every other line. Managed Services contributes its full contract value (not the monthly invoice) so every line is on the same total-value basis.</p>
+    </div>
+
+    <div class="card">
+      <h2>Discovery</h2>
+      <div class="grid cols-4" style="margin-bottom:14px;">
+        <div class="field"><label>Fee</label><div class="kpi" style="padding:10px 12px;"><div class="value small" id="sum_disc_fee">$0</div></div></div>
+        <div class="field"><label>Credits toward</label><div class="kpi" style="padding:10px 12px;"><div class="value small" id="sum_disc_credit">—</div></div></div>
+        <div class="field"><label>Status</label><div class="kpi" style="padding:10px 12px;"><div class="value small" id="sum_disc_status">—</div></div></div>
+        <div class="field"><label>Recommended track</label><div class="kpi" style="padding:10px 12px;"><div class="value small" id="sum_disc_track">—</div></div></div>
+      </div>
+      <div class="grid cols-4">
+        <div class="field"><label>Delivery cost</label><div class="kpi grey" style="padding:10px 12px;"><div class="value small" id="sum_disc_cost">$0</div></div></div>
+        <div class="field"><label>Margin</label><div class="kpi navy" style="padding:10px 12px;"><div class="value small" id="sum_disc_margin">0%</div></div></div>
+        <div class="field" style="grid-column:span 2;"><label>Approval</label><div class="kpi cyan" style="padding:10px 12px;"><div class="value small" id="sum_disc_approval">—</div></div></div>
+      </div>
+    </div>
+
+    <div class="section-title">Project (SOW)</div>
+    <div class="kpis" id="summaryProjectKpis"></div>
+
+    <div class="section-title">Managed Services (Subscription)</div>
+    <div class="kpis" id="summaryMsKpis"></div>
+
+    <div class="section-title">Ad-Hoc T&amp;M (Client Portal)</div>
+    <div class="kpis" id="summaryTmKpis"></div>
+
+    <div class="card">
+      <h2>Export</h2>
+      <p class="sub">Choose which sections to include, then export. The PDF includes the timeline infographic on the Project pages; the Word doc includes a text-based phase timeline instead of the graphic.</p>
+      <div class="grid cols-4" style="margin-bottom:16px;">
+        <label class="checkbox-row"><input type="checkbox" id="pdf_opt_discovery"> Paid Discovery</label>
+        <label class="checkbox-row"><input type="checkbox" id="pdf_opt_project"> Project</label>
+        <label class="checkbox-row"><input type="checkbox" id="pdf_opt_ms"> Managed Services</label>
+        <label class="checkbox-row"><input type="checkbox" id="pdf_opt_tm"> Ad-Hoc T&amp;M</label>
+      </div>
+      <div class="row-actions">
+        <button class="btn btn-primary" id="btnExport2">⬇ Download PDF</button>
+        <button class="btn btn-primary" id="btnExportWord2">⬇ Download Word</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div id="printRoot" style="display:none;"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+<script>
+window.__DC_LOGO__ = "data:image/png;base64,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";
+</script>
+<script>
+/* =========================================================================
+   Demand Chain — Engagement Scoping & Estimate
+   Built from the DC Way costing model (RATES / LOOKUPS / Timeline & Estimate
+   / Managed Svcs) and the DemandChain Engagement Model (paid discovery gate
+   routing clients into Project / Managed Services / Ad-Hoc T&M tracks).
+   ========================================================================= */
+
+/* ---------------------------- Reference data ---------------------------- */
+
+const DEFAULT_RATES = [
+  // name, cost, price
+  ["Executive", 120.36, 425],
+  ["Director", 98.66, 325],
+  ["Manager", 98.66, 250],
+  ["Senior Consultant", 98.66, 225],
+  ["Consultant", 83.31, 200],
+  ["Independent (1099) — Tier 1", 155, 275],
+  ["Independent (1099) — Tier 2", 125, 250],
+  ["Independent (1099) — Tier 3", 105, 210],
+  ["Nearshore Architect", 55, 150],
+  ["Nearshore Senior Dev", 45, 130],
+  ["Nearshore Mid Dev", 40, 120],
+  ["Nearshore Junior Dev", 30, 90],
+  ["Offshore Architect", 42, 85],
+  ["Offshore Senior", 38, 75],
+  ["Offshore Dev / Admin", 32, 65],
+  ["Offshore QA", 30, 60],
+];
+
+// Rate classes whose Cost/hr is a fixed salaried cost and can't be edited in the Rate Card.
+const LOCKED_COST_CLASSES = new Set([
+  "Executive", "Director", "Manager", "Senior Consultant", "Consultant",
+]);
+
+// Rate classes that used to exist but have been removed from the card. Any saved
+// session that still references one of these gets migrated forward on load.
+const RETIRED_RATE_CLASSES = new Set(["Senior Administrator", "Administrator"]);
+const RETIRED_RATE_FALLBACK = "Consultant";
+
+const PHASES = ["Planning", "Discovery", "P&B", "Deploy", "Wrap-up"];
+const PHASE_KEYS = ["planning", "discovery", "pb", "deploy", "wrapup"];
+const PHASE_COLORS = {
+  planning: "#002060",
+  discovery: "#00B0F0",
+  pb: "#912121",
+  deploy: "#595959",
+  wrapup: "#323232",
+};
+
+const TRACKS = [
+  { key: "project", label: "Project", tagline: "Scoped deliverable", desc: "Project lead + specialist team. SOW-bound, phased milestone delivery, formal close & sign-off.", creditsTo: "First milestone of SOW" },
+  { key: "ms", label: "Managed Services", tagline: "Recurring engagement", desc: "Named engagement lead. Retainer or sprint cadence, renewed via quarterly business review.", creditsTo: "First month of subscription" },
+  { key: "tm", label: "Ad-Hoc T&M", tagline: "Replaces unstructured T&M", desc: "FIFO queue, SLA response tiers, shared resource pool. No dedicated resource assigned.", creditsTo: "SLA tier setup fee / first queue credit" },
+];
+
+// Project pricing sub-models
+const PROJECT_MODES = [
+  { key: "hourly", label: "Hourly (T&M)", desc: "Resource × phase hours, priced straight from the rate card. Bills for time actually worked." },
+  { key: "fixed", label: "Fixed Bid", desc: "Named functionality/deliverable lines, each with its own client-facing fixed price. Bills the agreed price regardless of hours worked." },
+];
+
+const HOURLY_DETAIL_MODES = [
+  { key: "simple", label: "Simple (phase totals)", desc: "Type a total number of hours per phase for each resource — fast for rough scoping." },
+  { key: "weekly", label: "Weekly timeline (drag to fill)", desc: "Drag hours across a week-by-week grid generated from your phase & sprint durations — closer to how you'd actually staff it." },
+];
+
+// Managed Services delivery tiers — cost & price come live from the Rate Card.
+// Term-length discount anchors mirror the DC Way calculator's standard subscription
+// pricing (6 mo = full rate, 12 mo ≈ -4%, 24 mo ≈ -12%).
+const MS_REGIONS = [
+  { key: "onshore", label: "Onshore", defaultRateClass: "Senior Consultant", standardHours: [5,10,15,20,25,30,40] },
+  { key: "nearshore", label: "Nearshore", defaultRateClass: "Nearshore Senior Dev", standardHours: [20,40] },
+  { key: "offshore", label: "Offshore", defaultRateClass: "Offshore Senior", standardHours: [40] },
+];
+const MS_TERM_DISCOUNT = [[6, 1], [12, 0.96], [24, 0.88]];
+
+const SLA_TIERS = [
+  { value: "1", label: "Standard (×1.0)" },
+  { value: "1.15", label: "Priority (×1.15)" },
+  { value: "1.35", label: "Urgent (×1.35)" },
+];
+
+/* ------------------------------ App state -------------------------------- */
+
+function defaultState() {
+  return {
+    activeTrack: "project",
+    discovery: { fee: 7500, sessions: 2, status: "Not started", hours: 8, rateClass: "Consultant" },
+    project: {
+      account: "", project: "", oppurl: "", salesowner: "", se: "",
+      scopeappr: "", finappr: "", legalappr: "", startdate: "",
+    },
+    rates: DEFAULT_RATES.map(r => ({ name: r[0], cost: r[1], price: r[2] })),
+    phases: { planning_wk: 1, discovery_wk: 2, pb_sprints: 6, sprint_len: 2, deploy_wk: 1, wrapup_wk: 1 },
+    projectMode: "hourly",
+    hourlyDetailMode: "simple",
+    team: [
+      { role: "Solution Architect", rateClass: "Director", planning: 20, discovery: 40, pb: 60, deploy: 10, wrapup: 8 },
+      { role: "SBA Lead", rateClass: "Manager", planning: 8, discovery: 30, pb: 160, deploy: 30, wrapup: 12 },
+      { role: "Consultant", rateClass: "Consultant", planning: 4, discovery: 20, pb: 200, deploy: 20, wrapup: 8 },
+      { role: "Project Manager", rateClass: "Senior Consultant", planning: 8, discovery: 16, pb: 120, deploy: 16, wrapup: 16 },
+    ],
+    fixedLines: [
+      { name: "Custom object build-out", deliverable: "New object with fields, page layouts, and record-triggered automation", phase: "pb", hours: 40, rateClass: "Consultant", price: 9000 },
+    ],
+    projectRange: { costLowPct: 10, costHighPct: 20, hoursLowPct: 10, hoursHighPct: 20 },
+    ms: {
+      lead: "", cadence: "Retainer", months: "12", monthsCustom: 12, qbr: "Quarterly",
+      hours: { onshore: 10, nearshore: 0, offshore: 0 },
+      rateClass: { onshore: "Senior Consultant", nearshore: "Nearshore Senior Dev", offshore: "Offshore Senior" },
+    },
+    tm: {
+      requests: 4, approval: "",
+      lines: [
+        { rateClass: "Consultant", sla: "1", hours: 20 },
+      ],
+    },
+    pdfOptions: { discovery: true, project: true, ms: true, tm: true },
+    rollupOptions: { discovery: true, project: true, ms: true, tm: true },
+  };
+}
+
+let state = defaultState();
+
+/* ------------------------------ Persistence ------------------------------ */
+
+async function saveState() {
+  try {
+    if (window.storage) {
+      await window.storage.set("dc-estimate-state-v3", JSON.stringify(state), false);
+    }
+  } catch (e) { console.warn("save failed", e); }
+}
+
+function normalizeRates(rates, defaults) {
+  return rates.map(r => {
+    if (typeof r.price === "number") return r;
+    // migrate from the old Core/Advisory/MS shape
+    const price = r.priceCore ?? r.priceAdvisory ?? r.priceMS ?? (defaults.find(d => d.name === r.name) || {}).price ?? 0;
+    return { name: r.name, cost: r.cost, price };
+  });
+}
+
+async function loadState() {
+  try {
+    if (window.storage) {
+      let res = await window.storage.get("dc-estimate-state-v3", false).catch(() => null);
+      let parsed = res && res.value ? JSON.parse(res.value) : null;
+
+      if (!parsed) {
+        // one-time migration from the previous storage key/schema
+        const old = await window.storage.get("dc-estimate-state-v2", false).catch(() => null);
+        if (old && old.value) parsed = JSON.parse(old.value);
+      }
+
+      if (parsed) {
+        const d = defaultState();
+        state = Object.assign(d, parsed);
+        state.discovery = Object.assign(d.discovery, parsed.discovery || {});
+        state.project = Object.assign(d.project, parsed.project || {});
+        state.phases = Object.assign(d.phases, parsed.phases || {});
+        state.ms = Object.assign(d.ms, parsed.ms || {});
+        state.ms.hours = Object.assign(d.ms.hours, (parsed.ms && parsed.ms.hours) || {});
+        state.ms.rateClass = Object.assign(d.ms.rateClass, (parsed.ms && parsed.ms.rateClass) || {});
+        state.tm = Object.assign(d.tm, parsed.tm || {});
+        state.pdfOptions = Object.assign(d.pdfOptions, parsed.pdfOptions || {});
+        state.rollupOptions = Object.assign(d.rollupOptions, parsed.rollupOptions || {});
+        state.projectMode = parsed.projectMode === "fixed" ? "fixed" : "hourly";
+        state.hourlyDetailMode = parsed.hourlyDetailMode === "weekly" ? "weekly" : "simple";
+        state.projectRange = Object.assign(d.projectRange, parsed.projectRange || {});
+
+        state.rates = (!parsed.rates || !parsed.rates.length) ? d.rates : normalizeRates(parsed.rates, d.rates);
+        // drop any retired rate classes that carried over from an older saved session
+        state.rates = state.rates.filter(r => !RETIRED_RATE_CLASSES.has(r.name));
+        if (!state.rates.length) state.rates = d.rates;
+
+        if (!parsed.team || !parsed.team.length) state.team = d.team;
+        if (!parsed.fixedLines || !parsed.fixedLines.length) state.fixedLines = d.fixedLines;
+        if (!parsed.tm || !parsed.tm.lines || !parsed.tm.lines.length) state.tm.lines = d.tm.lines;
+
+        // re-point anything still referencing a retired rate class to a sane default
+        state.team.forEach(t => { if (RETIRED_RATE_CLASSES.has(t.rateClass)) t.rateClass = RETIRED_RATE_FALLBACK; });
+        state.fixedLines.forEach(l => { if (RETIRED_RATE_CLASSES.has(l.rateClass)) l.rateClass = RETIRED_RATE_FALLBACK; });
+        state.tm.lines.forEach(l => { if (RETIRED_RATE_CLASSES.has(l.rateClass)) l.rateClass = RETIRED_RATE_FALLBACK; });
+        Object.keys(state.ms.rateClass).forEach(k => {
+          if (RETIRED_RATE_CLASSES.has(state.ms.rateClass[k])) {
+            state.ms.rateClass[k] = d.ms.rateClass[k] || RETIRED_RATE_FALLBACK;
+          }
+        });
+
+        // migrate old single tm.sla to per-line if present
+        if (parsed.tm && parsed.tm.sla && Array.isArray(state.tm.lines)) {
+          state.tm.lines.forEach(l => { if (!l.sla) l.sla = parsed.tm.sla; });
+        }
+        state.tm.lines.forEach(l => { if (!l.sla) l.sla = "1"; });
+        state.fixedLines.forEach(l => { if (!l.phase) l.phase = "pb"; });
+      }
+    }
+  } catch (e) { /* no saved state yet */ }
+}
+
+/* ------------------------------ Helpers ------------------------------ */
+
+function fmtMoney(n) {
+  if (!isFinite(n)) n = 0;
+  return "$" + Math.round(n).toLocaleString("en-US");
+}
+function fmtPct(n) {
+  if (!isFinite(n)) return "0%";
+  return (Math.round(n * 1000) / 10) + "%";
+}
+function rateFor(rateClassName) {
+  return state.rates.find(r => r.name === rateClassName) || state.rates[0];
+}
+function marginApproval(margin) {
+  if (margin >= 0.60) return { label: "None needed — OK to present", tone: "good" };
+  return { label: "Approval required: Leadership (COO)", tone: "bad" };
+}
+function marginPillClass(margin) {
+  if (margin >= 0.60) return "pill-good";
+  return "pill-bad";
+}
+
+/* ============================ Project track calc =========================== */
+
+function computeTeamLines() {
+  return state.team.map(t => {
+    const rate = rateFor(t.rateClass);
+    const cost = rate ? rate.cost : 0;
+    const price = rate ? rate.price : 0;
+    const hours = {
+      planning: Number(t.planning) || 0,
+      discovery: Number(t.discovery) || 0,
+      pb: Number(t.pb) || 0,
+      deploy: Number(t.deploy) || 0,
+      wrapup: Number(t.wrapup) || 0,
+    };
+    const totalHours = Object.values(hours).reduce((a, b) => a + b, 0);
+    const lineCost = totalHours * cost;
+    const linePrice = totalHours * price;
+    const margin = linePrice > 0 ? (linePrice - lineCost) / linePrice : 0;
+    return { ...t, cost, price, hours, totalHours, lineCost, linePrice, margin };
+  });
+}
+
+function computeFixedLines() {
+  return state.fixedLines.map(t => {
+    const rate = rateFor(t.rateClass);
+    const cost = rate ? rate.cost : 0;
+    const hours = Number(t.hours) || 0;
+    const lineCost = hours * cost;
+    const suggestedPrice = rate ? hours * rate.price : 0;
+    const price = Number(t.price) || 0;
+    const margin = price > 0 ? (price - lineCost) / price : 0;
+    return { ...t, cost, hours, lineCost, suggestedPrice, price, margin };
+  });
+}
+
+function computePhaseSummary(lines) {
+  return PHASE_KEYS.map((key, i) => {
+    let hours = 0, price = 0;
+    lines.forEach(l => {
+      const h = l.hours[key] || 0;
+      hours += h;
+      price += h * l.price;
+    });
+    return { key, label: PHASES[i], hours, price };
+  });
+}
+
+function computeFixedPhaseSummary(lines) {
+  return PHASE_KEYS.map((key, i) => {
+    let hours = 0, price = 0;
+    lines.forEach(l => {
+      if (l.phase === key) {
+        hours += l.hours;
+        price += l.price;
+      }
+    });
+    return { key, label: PHASES[i], hours, price };
+  });
+}
+
+function computeProjectTotals() {
+  if (state.projectMode === "fixed") {
+    const lines = computeFixedLines();
+    const totalHours = lines.reduce((a, l) => a + l.hours, 0);
+    const totalCost = lines.reduce((a, l) => a + l.lineCost, 0);
+    const totalPrice = lines.reduce((a, l) => a + l.price, 0);
+    const margin = totalPrice > 0 ? Math.round(((totalPrice - totalCost) / totalPrice) * 100) / 100 : 0;
+    return { mode: "fixed", lines, totalHours, totalCost, totalPrice, margin };
+  }
+  const lines = computeTeamLines();
+  const totalHours = lines.reduce((a, l) => a + l.totalHours, 0);
+  const totalCost = lines.reduce((a, l) => a + l.lineCost, 0);
+  const totalPrice = lines.reduce((a, l) => a + l.linePrice, 0);
+  const margin = totalPrice > 0 ? Math.round(((totalPrice - totalCost) / totalPrice) * 100) / 100 : 0;
+  return { mode: "hourly", lines, totalHours, totalCost, totalPrice, margin };
+}
+
+function computeActivePhaseSummary() {
+  const totals = computeProjectTotals();
+  return totals.mode === "fixed" ? computeFixedPhaseSummary(totals.lines) : computePhaseSummary(totals.lines);
+}
+
+function computeProjectRange() {
+  const totals = computeProjectTotals();
+  const r = state.projectRange;
+  const costLowPct = Number(r.costLowPct) || 0;
+  const costHighPct = Number(r.costHighPct) || 0;
+  const hoursLowPct = Number(r.hoursLowPct) || 0;
+  const hoursHighPct = Number(r.hoursHighPct) || 0;
+  const costLow = totals.totalCost * (1 - costLowPct / 100);
+  const costHigh = totals.totalCost * (1 + costHighPct / 100);
+  const price = totals.totalPrice;
+  // Price is held at the quoted project price; margin moves inversely with cost —
+  // the low-cost scenario is the best case for margin, high-cost is the worst case.
+  const marginAtCostLow = price > 0 ? (price - costLow) / price : 0;
+  const marginAtCostHigh = price > 0 ? (price - costHigh) / price : 0;
+  return {
+    costLow,
+    costHigh,
+    hoursLow: totals.totalHours * (1 - hoursLowPct / 100),
+    hoursHigh: totals.totalHours * (1 + hoursHighPct / 100),
+    marginAtCostLow,
+    marginAtCostHigh,
+  };
+}
+
+/* ---- Timeline dates ---- */
+
+function mondayOf(date) {
+  const d = new Date(date);
+  const day = d.getDay();
+  const diff = (day === 0 ? -6 : 1 - day);
+  d.setDate(d.getDate() + diff);
+  d.setHours(0, 0, 0, 0);
+  return d;
+}
+
+function buildTimelinePhases() {
+  const start = state.project.startdate ? mondayOf(new Date(state.project.startdate + "T00:00:00")) : mondayOf(new Date());
+  const p = state.phases;
+  const segs = [];
+  let cursor = new Date(start);
+
+  function pushSeg(key, label, weeks, sprintInfo) {
+    const segStart = new Date(cursor);
+    const segEnd = new Date(cursor);
+    segEnd.setDate(segEnd.getDate() + weeks * 7);
+    segs.push({ key, label, start: segStart, end: segEnd, weeks, sprintInfo });
+    cursor = new Date(segEnd);
+  }
+
+  pushSeg("planning", "Planning", Number(p.planning_wk) || 0);
+  pushSeg("discovery", "Discovery", Number(p.discovery_wk) || 0);
+
+  const sprints = Number(p.pb_sprints) || 0;
+  const sprintLen = Number(p.sprint_len) || 1;
+  const pbWeeks = sprints * sprintLen;
+  const sprintStarts = [];
+  for (let s = 0; s < sprints; s++) {
+    sprintStarts.push(new Date(cursor.getTime() + s * sprintLen * 7 * 86400000));
+  }
+  pushSeg("pb", "P&B", pbWeeks, { sprints, sprintLen, sprintStarts });
+
+  pushSeg("deploy", "Deploy", Number(p.deploy_wk) || 0);
+  pushSeg("wrapup", "Wrap-up", Number(p.wrapup_wk) || 0);
+
+  return segs;
+}
+
+function fmtDate(d) {
+  return d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+}
+
+/* ---- Weekly timeline grid (Hourly project mode, "weekly" detail mode) ---- */
+
+// One descriptor per calendar week in the project, in phase order. weekInPhase
+// resets to 0 at the start of each phase, so grid data is keyed by
+// "<phaseKey>:<weekInPhase>" rather than a flat index — that way, adding or
+// removing a sprint only shifts P&B's own weeks, and every other phase's
+// already-entered hours are untouched.
+function buildProjectWeeks() {
+  const start = state.project.startdate ? mondayOf(new Date(state.project.startdate + "T00:00:00")) : mondayOf(new Date());
+  const p = state.phases;
+  const weeks = [];
+  let cursor = new Date(start);
+
+  function pushWeeks(phaseKey, phaseLabel, count) {
+    for (let i = 0; i < count; i++) {
+      const weekStart = new Date(cursor);
+      const weekEnd = new Date(cursor.getTime() + 7 * 86400000);
+      weeks.push({ index: weeks.length, phaseKey, phaseLabel, weekInPhase: i, weekStart, weekEnd });
+      cursor = weekEnd;
+    }
+  }
+
+  pushWeeks("planning", "Planning", Number(p.planning_wk) || 0);
+  pushWeeks("discovery", "Discovery", Number(p.discovery_wk) || 0);
+  const sprints = Number(p.pb_sprints) || 0;
+  const sprintLen = Number(p.sprint_len) || 1;
+  pushWeeks("pb", "P&B", sprints * sprintLen);
+  pushWeeks("deploy", "Deploy", Number(p.deploy_wk) || 0);
+  pushWeeks("wrapup", "Wrap-up", Number(p.wrapup_wk) || 0);
+
+  return weeks;
+}
+
+function weeklyKey(phaseKey, weekInPhase) {
+  return phaseKey + ":" + weekInPhase;
+}
+
+// The first time a resource is touched in weekly mode, seed its weekly grid by
+// evenly spreading its existing phase totals across that phase's weeks — so
+// switching modes doesn't reset anything, it just gets more granular.
+function ensureResourceWeekly(t, weeks) {
+  if (t.weeklyMap) return;
+  t.weeklyMap = {};
+  const weeksByPhase = {};
+  weeks.forEach(w => { (weeksByPhase[w.phaseKey] = weeksByPhase[w.phaseKey] || []).push(w.weekInPhase); });
+  PHASE_KEYS.forEach(key => {
+    const total = Number(t[key]) || 0;
+    const idxs = weeksByPhase[key] || [];
+    if (!idxs.length) return;
+    const base = Math.floor(total / idxs.length);
+    const remainder = total - base * idxs.length;
+    idxs.forEach((wi, i) => {
+      t.weeklyMap[weeklyKey(key, wi)] = base + (i < remainder ? 1 : 0);
+    });
+  });
+}
+
+// Weekly hours are the source of truth once a resource has a weeklyMap — this
+// rolls each phase's weeks back up into t.planning/discovery/pb/deploy/wrapup,
+// so every existing calculation (cost, price, margin, KPIs, PDF/Word) keeps
+// working unchanged.
+function recomputePhaseTotalsFromWeekly(t, weeks) {
+  const sums = { planning: 0, discovery: 0, pb: 0, deploy: 0, wrapup: 0 };
+  weeks.forEach(w => {
+    sums[w.phaseKey] += Number(t.weeklyMap[weeklyKey(w.phaseKey, w.weekInPhase)]) || 0;
+  });
+  PHASE_KEYS.forEach(key => { t[key] = sums[key]; });
+}
+
+/* ============================ Managed Services calc =========================== */
+
+function msMonths() {
+  return state.ms.months === "custom" ? (Number(state.ms.monthsCustom) || 12) : Number(state.ms.months);
+}
+
+function msTermDiscount(months) {
+  // piecewise-linear interpolation across the 6/12/24 month discount anchors
+  const pts = MS_TERM_DISCOUNT;
+  if (months <= pts[0][0]) return pts[0][1];
+  if (months >= pts[2][0]) return pts[2][1];
+  for (let i = 0; i < pts.length - 1; i++) {
+    const [m1, r1] = pts[i], [m2, r2] = pts[i + 1];
+    if (months >= m1 && months <= m2) {
+      const t = (months - m1) / (m2 - m1);
+      return r1 + t * (r2 - r1);
+    }
+  }
+  return pts[1][1];
+}
+
+function computeMsTiers() {
+  const months = msMonths();
+  const weeks = Math.round(months * 4.32);
+  const discount = msTermDiscount(months);
+  return MS_REGIONS.map(region => {
+    const rateClassName = state.ms.rateClass[region.key] || region.defaultRateClass;
+    const rateCard = rateFor(rateClassName);
+    const cost = rateCard ? rateCard.cost : 0;
+    const rate = (rateCard ? rateCard.price : 0) * discount;
+    const hrsPerWeek = Number(state.ms.hours[region.key]) || 0;
+    const weeklyRevenue = hrsPerWeek * rate;
+    const totalHours = hrsPerWeek * weeks;
+    const revenue = totalHours * rate;
+    const totalCost = totalHours * cost;
+    const margin = revenue > 0 ? (revenue - totalCost) / revenue : 0;
+    const isStandard = hrsPerWeek === 0 || region.standardHours.includes(hrsPerWeek);
+    return { ...region, rateClassName, hrsPerWeek, rate, cost, weeklyRevenue, totalHours, revenue, totalCost, margin, isStandard };
+  });
+}
+
+function computeMsTotals() {
+  const months = msMonths();
+  const tiers = computeMsTiers();
+  const totalRevenue = tiers.reduce((a, t) => a + t.revenue, 0);
+  const totalCost = tiers.reduce((a, t) => a + t.totalCost, 0);
+  const totalHours = tiers.reduce((a, t) => a + t.totalHours, 0);
+  const margin = totalRevenue > 0 ? Math.round(((totalRevenue - totalCost) / totalRevenue) * 100) / 100 : 0;
+  const blendedRate = totalHours > 0 ? totalRevenue / totalHours : 0;
+  const monthlyInvoice = months > 0 ? totalRevenue / months : 0;
+  const anyNonStandard = tiers.some(t => t.hrsPerWeek > 0 && !t.isStandard);
+  return { months, tiers, totalRevenue, totalCost, totalHours, margin, blendedRate, monthlyInvoice, anyNonStandard };
+}
+
+/* ============================ Ad-Hoc T&M calc =========================== */
+
+function slaMultiplier(sla) {
+  return Number(sla) || 1;
+}
+function slaLabelFor(sla) {
+  const t = SLA_TIERS.find(s => s.value === String(sla));
+  return t ? t.label.replace(/\s*\(.*\)$/, "") : "Standard";
+}
+
+function computeTmLines() {
+  return state.tm.lines.map(t => {
+    const rate = rateFor(t.rateClass);
+    const cost = rate ? rate.cost : 0;
+    const basePrice = rate ? rate.price : 0;
+    const price = basePrice * slaMultiplier(t.sla);
+    const hours = Number(t.hours) || 0;
+    const lineCost = hours * cost;
+    const linePrice = hours * price;
+    const margin = linePrice > 0 ? (linePrice - lineCost) / linePrice : 0;
+    return { ...t, cost, price, hours, lineCost, linePrice, margin };
+  });
+}
+
+function computeTmTotals() {
+  const lines = computeTmLines();
+  const totalHours = lines.reduce((a, l) => a + l.hours, 0);
+  const totalCost = lines.reduce((a, l) => a + l.lineCost, 0);
+  const totalPrice = lines.reduce((a, l) => a + l.linePrice, 0);
+  const margin = totalPrice > 0 ? Math.round(((totalPrice - totalCost) / totalPrice) * 100) / 100 : 0;
+  return { lines, totalHours, totalCost, totalPrice, margin };
+}
+
+/* ============================ Discovery delivery calc =========================== */
+
+function computeDiscoveryDelivery() {
+  const disc = state.discovery;
+  const rate = rateFor(disc.rateClass);
+  const hours = Number(disc.hours) || 0;
+  const cost = hours * (rate ? rate.cost : 0);
+  const fee = Number(disc.fee) || 0;
+  const margin = fee > 0 ? (fee - cost) / fee : 0;
+  return { hours, cost, fee, margin };
+}
+
+/* ============================ Engagement rollup =========================== */
+
+// Combined view across all four service lines. Managed Services contributes its
+// full contract value (not the monthly invoice), so all four lines are on an
+// apples-to-apples "total value of this line" basis.
+function computeRollup() {
+  const disc = state.discovery;
+  const discCalc = computeDiscoveryDelivery();
+  const pt = computeProjectTotals();
+  const mt = computeMsTotals();
+  const tt = computeTmTotals();
+
+  const rows = [
+    { key: "discovery", label: "Paid Discovery", price: Number(disc.fee) || 0, cost: discCalc.cost, hours: discCalc.hours },
+    { key: "project", label: "Project", price: pt.totalPrice, cost: pt.totalCost, hours: pt.totalHours },
+    { key: "ms", label: "Managed Services (contract value)", price: mt.totalRevenue, cost: mt.totalCost, hours: mt.totalHours },
+    { key: "tm", label: "Ad-Hoc T&M", price: tt.totalPrice, cost: tt.totalCost, hours: tt.totalHours },
+  ].map(r => ({
+    ...r,
+    margin: r.price > 0 ? (r.price - r.cost) / r.price : 0,
+    included: state.rollupOptions[r.key] !== false,
+  }));
+
+  const includedRows = rows.filter(r => r.included);
+  const totalPrice = includedRows.reduce((a, r) => a + r.price, 0);
+  const totalCost = includedRows.reduce((a, r) => a + r.cost, 0);
+  const totalHours = includedRows.reduce((a, r) => a + r.hours, 0);
+  const totalMargin = totalPrice > 0 ? (totalPrice - totalCost) / totalPrice : 0;
+
+  return { rows, totalPrice, totalCost, totalHours, totalMargin };
+}
+
+/* ============================== Rendering ================================ */
+
+function el(tag, attrs = {}, children = []) {
+  const e = document.createElement(tag);
+  Object.entries(attrs).forEach(([k, v]) => {
+    if (k === "class") e.className = v;
+    else if (k === "html") e.innerHTML = v;
+    else e.setAttribute(k, v);
+  });
+  (Array.isArray(children) ? children : [children]).forEach(c => {
+    if (c == null) return;
+    e.appendChild(typeof c === "string" ? document.createTextNode(c) : c);
+  });
+  return e;
+}
+
+function numInput(value, onChange, editable, locked, key) {
+  const input = document.createElement("input");
+  input.type = "text";
+  input.inputMode = "decimal";
+  input.value = value;
+  input.className = editable ? "editable" : "";
+  input.style.textAlign = "right";
+  if (key) input.dataset.key = key;
+  if (locked) {
+    input.disabled = true;
+    input.title = "Fixed salaried cost — not editable";
+    input.style.background = "#F1F0EE";
+    input.style.color = "#8a8a8a";
+    input.style.cursor = "not-allowed";
+  } else {
+    input.addEventListener("input", () => onChange(Number(input.value) || 0));
+  }
+  const td = document.createElement("td");
+  td.appendChild(input);
+  return td;
+}
+
+function kpiCard(label, value, cls) {
+  return el("div", { class: "kpi " + (cls || "") }, [
+    el("div", { class: "label" }, label),
+    el("div", { class: "value" }, value),
+  ]);
+}
+
+/* ---- Track selector cards ---- */
+
+function renderTrackCards() {
+  const wrap = document.getElementById("trackCards");
+  wrap.innerHTML = "";
+  TRACKS.forEach(t => {
+    const card = el("div", { class: "track-card" + (state.activeTrack === t.key ? " selected" : "") }, [
+      el("div", { class: "tc-radio" }),
+      el("div", { class: "tc-label" }, t.tagline),
+      el("div", { class: "tc-title" }, t.label),
+      el("div", { class: "tc-desc" }, t.desc),
+    ]);
+    card.addEventListener("click", () => {
+      state.activeTrack = t.key;
+      renderAll(); saveState();
+      document.querySelector('.tab[data-tab="track-' + (t.key === "project" ? "project" : t.key) + '"]')?.click();
+    });
+    wrap.appendChild(card);
+  });
+}
+
+/* ---- Project Info + Discovery bindings ---- */
+
+function bindProjectFields() {
+  const map = {
+    pi_account: "account", pi_project: "project", pi_oppurl: "oppurl",
+    pi_salesowner: "salesowner", pi_se: "se", pi_scopeappr: "scopeappr",
+    pi_finappr: "finappr", pi_legalappr: "legalappr", pi_startdate: "startdate",
+  };
+  Object.entries(map).forEach(([id, key]) => {
+    const input = document.getElementById(id);
+    input.value = state.project[key] ?? "";
+    input.addEventListener("input", () => {
+      state.project[key] = input.value;
+      renderAll();
+      saveState();
+    });
+  });
+
+  document.getElementById("disc_fee").value = state.discovery.fee;
+  document.getElementById("disc_fee").addEventListener("input", e => { state.discovery.fee = Number(e.target.value) || 0; renderAll(); saveState(); });
+  document.getElementById("disc_sessions").value = state.discovery.sessions;
+  document.getElementById("disc_sessions").addEventListener("input", e => { state.discovery.sessions = Number(e.target.value) || 1; saveState(); });
+  const statusSel = document.getElementById("disc_status");
+  statusSel.value = state.discovery.status;
+  statusSel.addEventListener("change", e => { state.discovery.status = e.target.value; renderAll(); saveState(); });
+
+  document.getElementById("disc_hours").value = state.discovery.hours;
+  document.getElementById("disc_hours").addEventListener("input", e => { state.discovery.hours = Number(e.target.value) || 0; renderAll(); saveState(); });
+}
+
+function renderDiscoveryCreditDisplay() {
+  const sel = document.getElementById("disc_credit_display");
+  const track = TRACKS.find(t => t.key === state.activeTrack);
+  sel.innerHTML = "";
+  const opt = document.createElement("option");
+  opt.textContent = track ? track.creditsTo : "—";
+  sel.appendChild(opt);
+}
+
+function renderDiscoveryDeliveryFields() {
+  const rateSel = document.getElementById("disc_rateclass");
+  const prevValue = state.discovery.rateClass;
+  rateSel.innerHTML = "";
+  state.rates.forEach(r => {
+    const opt = document.createElement("option");
+    opt.value = r.name; opt.textContent = r.name;
+    if (r.name === prevValue) opt.selected = true;
+    rateSel.appendChild(opt);
+  });
+  if (!rateSel.value && state.rates.length) {
+    state.discovery.rateClass = state.rates[0].name;
+    rateSel.value = state.rates[0].name;
+  }
+  rateSel.onchange = () => { state.discovery.rateClass = rateSel.value; renderAll(); saveState(); };
+
+  const calc = computeDiscoveryDelivery();
+  document.getElementById("disc_cost_display").textContent = fmtMoney(calc.cost);
+  const approval = marginApproval(calc.margin);
+  const marginEl = document.getElementById("disc_margin_display");
+  marginEl.innerHTML = "";
+  marginEl.appendChild(document.createTextNode(fmtPct(calc.margin)));
+  if (approval.tone !== "good") {
+    const warn = document.createElement("div");
+    warn.style.fontSize = "11px";
+    warn.style.fontWeight = "bold";
+    warn.style.color = "#FFD54A";
+    warn.style.marginTop = "2px";
+    warn.textContent = "⚠ " + approval.label;
+    marginEl.appendChild(warn);
+  }
+}
+
+/* ---- Rates ---- */
+
+function renderRatesTable() {
+  const body = document.getElementById("ratesBody");
+  body.innerHTML = "";
+  state.rates.forEach((r) => {
+    const margin = r.price > 0 ? (r.price - r.cost) / r.price : 0;
+    const locked = LOCKED_COST_CLASSES.has(r.name);
+
+    const tr = el("tr", {}, [
+      el("td", {}, r.name + (locked ? " 🔒" : "")),
+      numInput(r.cost, v => { r.cost = v; onRateEdited(r.name); saveState(); }, false, locked, "rate-cost-" + r.name),
+      numInput(r.price, v => { r.price = v; onRateEdited(r.name); saveState(); }, true, false, "rate-price-" + r.name),
+      el("td", { class: "num", "data-key": "rate-margin-" + r.name }, fmtPct(margin)),
+    ]);
+    body.appendChild(tr);
+  });
+}
+
+// Called when a Rate Card cost/price value changes. Patches this row's own Margin
+// cell directly (no rebuild, so the input the user is actively typing in is never
+// touched) and refreshes every other section that depends on rates — those tables
+// aren't focused, so a full rebuild there is safe.
+function onRateEdited(rateName) {
+  const r = state.rates.find(x => x.name === rateName);
+  if (r) {
+    const marginCell = document.querySelector('[data-key="rate-margin-' + rateName + '"]');
+    if (marginCell) {
+      const margin = r.price > 0 ? (r.price - r.cost) / r.price : 0;
+      marginCell.textContent = fmtPct(margin);
+    }
+  }
+  renderAll({ skipRates: true });
+}
+
+/* ---- Project track ---- */
+
+function renderTeamTable() {
+  const body = document.getElementById("teamBody");
+  body.innerHTML = "";
+  const totals = computeProjectTotals();
+  if (totals.mode !== "hourly") return;
+  const lines = totals.lines;
+
+  state.team.forEach((t, idx) => {
+    const line = lines[idx];
+    const tr = el("tr");
+
+    const roleInput = document.createElement("input");
+    roleInput.type = "text"; roleInput.value = t.role;
+    roleInput.dataset.key = "team-role-" + idx;
+    roleInput.addEventListener("input", () => { t.role = roleInput.value; saveState(); });
+    tr.appendChild(el("td", {}, roleInput));
+
+    const rateSel = document.createElement("select");
+    rateSel.dataset.key = "team-rate-" + idx;
+    state.rates.forEach(r => {
+      const opt = document.createElement("option");
+      opt.value = r.name; opt.textContent = r.name;
+      if (r.name === t.rateClass) opt.selected = true;
+      rateSel.appendChild(opt);
+    });
+    rateSel.addEventListener("change", () => { t.rateClass = rateSel.value; renderAll(); saveState(); });
+    tr.appendChild(el("td", {}, rateSel));
+
+    const isWeeklyMode = state.hourlyDetailMode === "weekly";
+    ["planning", "discovery", "pb", "deploy", "wrapup"].forEach(key => {
+      if (isWeeklyMode) {
+        tr.appendChild(el("td", { class: "num", "data-key": "team-" + key + "-" + idx }, String(Math.round(Number(t[key]) || 0))));
+        return;
+      }
+      const input = document.createElement("input");
+      input.type = "text"; input.inputMode = "decimal"; input.value = t[key];
+      input.style.textAlign = "right";
+      input.dataset.key = "team-" + key + "-" + idx;
+      input.addEventListener("input", () => { t[key] = Number(input.value) || 0; onTeamHourEdited(idx); saveState(); });
+      tr.appendChild(el("td", { class: "num" }, input));
+    });
+
+    tr.appendChild(el("td", { class: "num", "data-key": "team-totalhours-" + idx }, String(Math.round(line.totalHours))));
+    tr.appendChild(el("td", { class: "num" }, "$" + line.cost.toFixed(2)));
+    tr.appendChild(el("td", { class: "num" }, "$" + line.price.toFixed(2)));
+    tr.appendChild(el("td", { class: "num", "data-key": "team-linecost-" + idx }, fmtMoney(line.lineCost)));
+    tr.appendChild(el("td", { class: "num", "data-key": "team-lineprice-" + idx }, fmtMoney(line.linePrice)));
+
+    const marginPill = el("span", { class: "pill " + marginPillClass(line.margin) }, fmtPct(line.margin));
+    tr.appendChild(el("td", { class: "num", "data-key": "team-marginpill-" + idx }, marginPill));
+
+    const rm = el("button", { class: "remove-btn", title: "Remove resource" }, "×");
+    rm.addEventListener("click", () => { state.team.splice(idx, 1); renderAll(); saveState(); });
+    tr.appendChild(el("td", {}, rm));
+
+    body.appendChild(tr);
+  });
+}
+
+// Called when a Team row's hour field changes. Patches this row's computed cells
+// directly (total hours, line cost/price, margin) without rebuilding the table, so
+// the hour field the user is typing in is never destroyed mid-edit.
+function onTeamHourEdited(idx) {
+  const totals = computeProjectTotals();
+  if (totals.mode === "hourly" && totals.lines[idx]) {
+    const line = totals.lines[idx];
+    const totalCell = document.querySelector('[data-key="team-totalhours-' + idx + '"]');
+    const costCell = document.querySelector('[data-key="team-linecost-' + idx + '"]');
+    const priceCell = document.querySelector('[data-key="team-lineprice-' + idx + '"]');
+    const marginCell = document.querySelector('[data-key="team-marginpill-' + idx + '"]');
+    if (totalCell) totalCell.textContent = String(Math.round(line.totalHours));
+    if (costCell) costCell.textContent = fmtMoney(line.lineCost);
+    if (priceCell) priceCell.textContent = fmtMoney(line.linePrice);
+    if (marginCell) {
+      marginCell.innerHTML = "";
+      marginCell.appendChild(el("span", { class: "pill " + marginPillClass(line.margin) }, fmtPct(line.margin)));
+    }
+  }
+  renderAll({ skipTeam: true });
+}
+
+/* ---- Weekly timeline grid rendering + drag-to-fill ---- */
+
+// Module-level drag state. Not part of app state — it's purely a UI interaction,
+// reset as soon as the mouse is released.
+let weeklyDrag = null; // { rowIdx, value }
+let weeklyHighlighted = []; // td elements currently painted during the active drag
+
+function highlightWeeklyCell(inputEl) {
+  if (!inputEl) return;
+  const td = inputEl.closest("td");
+  if (td && !td.classList.contains("wg-highlight")) {
+    td.classList.add("wg-highlight");
+    weeklyHighlighted.push(td);
+  }
+}
+
+function clearWeeklyHighlights() {
+  weeklyHighlighted.forEach(td => td.classList.remove("wg-highlight"));
+  weeklyHighlighted = [];
+}
+
+function weeklyCellKey(rowIdx, phaseKey, weekInPhase) {
+  return "wg-" + rowIdx + "-" + phaseKey + "-" + weekInPhase;
+}
+
+function renderWeeklyGrid() {
+  const head = document.getElementById("weeklyGridHead");
+  const body = document.getElementById("weeklyGridBody");
+  const foot = document.getElementById("weeklyGridFoot");
+  if (!head || state.projectMode !== "hourly" || state.hourlyDetailMode !== "weekly") return;
+
+  const weeks = buildProjectWeeks();
+  state.team.forEach(t => ensureResourceWeekly(t, weeks));
+
+  // --- header: phase group row + week row ---
+  head.innerHTML = "";
+  const phaseRow = document.createElement("tr");
+  phaseRow.appendChild(el("th", { class: "wg-resource" }, "Resource"));
+  let run = null;
+  const phaseHeaderCells = [];
+  weeks.forEach(w => {
+    if (run && run.phaseKey === w.phaseKey) { run.span++; }
+    else { run = { phaseKey: w.phaseKey, label: w.phaseLabel, span: 1 }; phaseHeaderCells.push(run); }
+  });
+  phaseHeaderCells.forEach(r => {
+    phaseRow.appendChild(el("th", { class: "wg-phase", colspan: String(r.span), style: "background:" + PHASE_COLORS[r.phaseKey] + ";" }, r.label));
+  });
+  phaseRow.appendChild(el("th", { class: "wg-total" }, ""));
+  head.appendChild(phaseRow);
+
+  const weekRow = document.createElement("tr");
+  weekRow.appendChild(el("th", { class: "wg-resource" }, ""));
+  weeks.forEach(w => {
+    weekRow.appendChild(el("th", { class: "wg-week", title: fmtDate(w.weekStart) + " – " + fmtDate(new Date(w.weekEnd.getTime() - 86400000)) }, "Wk " + (w.index + 1)));
+  });
+  weekRow.appendChild(el("th", { class: "wg-total" }, "Total"));
+  head.appendChild(weekRow);
+
+  // --- body: one row per resource ---
+  body.innerHTML = "";
+  state.team.forEach((t, rowIdx) => {
+    const tr = document.createElement("tr");
+    tr.appendChild(el("td", { class: "wg-resource" }, (t.role || "Untitled") + " (" + t.rateClass + ")"));
+
+    weeks.forEach(w => {
+      const key = weeklyKey(w.phaseKey, w.weekInPhase);
+      const val = Number(t.weeklyMap[key]) || 0;
+      const input = document.createElement("input");
+      input.type = "text"; input.inputMode = "decimal"; input.value = val === 0 ? "" : String(val);
+      input.placeholder = "0";
+      input.dataset.key = weeklyCellKey(rowIdx, w.phaseKey, w.weekInPhase);
+
+      input.addEventListener("mousedown", () => {
+        clearWeeklyHighlights();
+        weeklyDrag = { rowIdx, value: Number(input.value) || 0 };
+        highlightWeeklyCell(input);
+        const table = document.getElementById("weeklyGridTable");
+        if (table) table.classList.add("wg-dragging");
+      });
+      input.addEventListener("mouseenter", () => {
+        if (weeklyDrag && weeklyDrag.rowIdx === rowIdx) {
+          paintWeeklyCell(rowIdx, w.phaseKey, w.weekInPhase, weeklyDrag.value);
+        }
+      });
+      input.addEventListener("input", () => {
+        t.weeklyMap[key] = Number(input.value) || 0;
+        onWeeklyCellEdited(rowIdx);
+      });
+
+      const td = el("td", { class: "wg-cell" }, input);
+      tr.appendChild(td);
+    });
+
+    const totalCell = el("td", { class: "num wg-total", "data-key": "wg-rowtotal-" + rowIdx }, String(weeklyRowTotal(t, weeks)));
+    tr.appendChild(totalCell);
+    body.appendChild(tr);
+  });
+
+  // --- footer: per-week totals across the team + grand total ---
+  foot.innerHTML = "";
+  const footRow = document.createElement("tr");
+  footRow.appendChild(el("td", { class: "wg-resource" }, "Week total"));
+  let grand = 0;
+  weeks.forEach(w => {
+    const sum = state.team.reduce((a, t) => a + (Number(t.weeklyMap[weeklyKey(w.phaseKey, w.weekInPhase)]) || 0), 0);
+    grand += sum;
+    footRow.appendChild(el("td", { class: "num", "data-key": "wg-weektotal-" + w.phaseKey + "-" + w.weekInPhase }, sum ? String(sum) : ""));
+  });
+  footRow.appendChild(el("td", { class: "num wg-total", "data-key": "wg-grandtotal" }, String(grand)));
+  foot.appendChild(footRow);
+
+  renderWeeklyGridLegend();
+}
+
+function weeklyRowTotal(t, weeks) {
+  return weeks.reduce((a, w) => a + (Number(t.weeklyMap[weeklyKey(w.phaseKey, w.weekInPhase)]) || 0), 0);
+}
+
+function renderWeeklyGridLegend() {
+  const legend = document.getElementById("weeklyGridLegend");
+  if (!legend) return;
+  legend.innerHTML = "";
+  PHASE_KEYS.forEach((k, i) => {
+    const item = document.createElement("span");
+    item.innerHTML = `<span class="phase-swatch" style="background:${PHASE_COLORS[k]}"></span>${PHASES[i]}`;
+    legend.appendChild(item);
+  });
+}
+
+// Directly patches one cell's displayed value without touching any other DOM node
+// — this is what makes drag-painting across many cells feel instant instead of
+// re-rendering (and losing the drag) on every cell crossed.
+function paintWeeklyCell(rowIdx, phaseKey, weekInPhase, value) {
+  const t = state.team[rowIdx];
+  if (!t) return;
+  const key = weeklyKey(phaseKey, weekInPhase);
+  t.weeklyMap[key] = value;
+  const cellInput = document.querySelector('[data-key="' + weeklyCellKey(rowIdx, phaseKey, weekInPhase) + '"]');
+  if (cellInput) cellInput.value = value === 0 ? "" : String(value);
+  highlightWeeklyCell(cellInput);
+  onWeeklyCellEdited(rowIdx, { skipFullRender: true });
+}
+
+// Called on every weekly-cell change. During an active drag we only patch the
+// lightweight totals (row total, week-column total, grand total) so painting
+// stays smooth; the full recalculation (phase totals, KPIs, margin, Summary)
+// happens once, on mouseup.
+function onWeeklyCellEdited(rowIdx, opts) {
+  opts = opts || {};
+  const weeks = buildProjectWeeks();
+  const t = state.team[rowIdx];
+  if (!t) return;
+
+  const rowTotalCell = document.querySelector('[data-key="wg-rowtotal-' + rowIdx + '"]');
+  if (rowTotalCell) rowTotalCell.textContent = String(weeklyRowTotal(t, weeks));
+
+  let grand = 0;
+  weeks.forEach(w => {
+    const sum = state.team.reduce((a, tm) => a + (Number(tm.weeklyMap[weeklyKey(w.phaseKey, w.weekInPhase)]) || 0), 0);
+    grand += sum;
+    const cell = document.querySelector('[data-key="wg-weektotal-' + w.phaseKey + '-' + w.weekInPhase + '"]');
+    if (cell) cell.textContent = sum ? String(sum) : "";
+  });
+  const grandCell = document.querySelector('[data-key="wg-grandtotal"]');
+  if (grandCell) grandCell.textContent = String(grand);
+
+  if (opts.skipFullRender) return;
+
+  recomputePhaseTotalsFromWeekly(t, weeks);
+  saveState();
+  renderAll({ skipWeekly: true });
+}
+
+function renderFixedTable() {
+  const body = document.getElementById("fixedBody");
+  body.innerHTML = "";
+  const lines = computeFixedLines();
+
+  state.fixedLines.forEach((t, idx) => {
+    const line = lines[idx];
+    const tr = el("tr");
+
+    const nameInput = document.createElement("input");
+    nameInput.type = "text"; nameInput.value = t.name; nameInput.placeholder = "e.g. Lead routing automation";
+    nameInput.dataset.key = "fixed-name-" + idx;
+    nameInput.addEventListener("input", () => { t.name = nameInput.value; saveState(); });
+    tr.appendChild(el("td", {}, nameInput));
+
+    const delivInput = document.createElement("input");
+    delivInput.type = "text"; delivInput.value = t.deliverable; delivInput.placeholder = "e.g. Flow + validation rules, tested & documented";
+    delivInput.dataset.key = "fixed-deliverable-" + idx;
+    delivInput.addEventListener("input", () => { t.deliverable = delivInput.value; saveState(); });
+    tr.appendChild(el("td", {}, delivInput));
+
+    const phaseSel = document.createElement("select");
+    phaseSel.dataset.key = "fixed-phase-" + idx;
+    PHASE_KEYS.forEach((k, i) => {
+      const opt = document.createElement("option");
+      opt.value = k; opt.textContent = PHASES[i];
+      if (k === t.phase) opt.selected = true;
+      phaseSel.appendChild(opt);
+    });
+    phaseSel.addEventListener("change", () => { t.phase = phaseSel.value; renderAll(); saveState(); });
+    tr.appendChild(el("td", {}, phaseSel));
+
+    const hrsInput = document.createElement("input");
+    hrsInput.type = "text"; hrsInput.inputMode = "decimal"; hrsInput.value = t.hours;
+    hrsInput.style.textAlign = "right";
+    hrsInput.dataset.key = "fixed-hours-" + idx;
+    hrsInput.addEventListener("input", () => { t.hours = Number(hrsInput.value) || 0; onFixedLineEdited(idx); saveState(); });
+    tr.appendChild(el("td", { class: "num" }, hrsInput));
+
+    const rateSel = document.createElement("select");
+    rateSel.dataset.key = "fixed-rate-" + idx;
+    state.rates.forEach(r => {
+      const opt = document.createElement("option");
+      opt.value = r.name; opt.textContent = r.name;
+      if (r.name === t.rateClass) opt.selected = true;
+      rateSel.appendChild(opt);
+    });
+    rateSel.addEventListener("change", () => { t.rateClass = rateSel.value; renderAll(); saveState(); });
+    tr.appendChild(el("td", {}, rateSel));
+
+    tr.appendChild(el("td", { class: "num", "data-key": "fixed-linecost-" + idx }, fmtMoney(line.lineCost)));
+
+    const priceWrap = document.createElement("div");
+    const priceInput = document.createElement("input");
+    priceInput.type = "text"; priceInput.inputMode = "decimal"; priceInput.value = t.price;
+    priceInput.style.textAlign = "right";
+    priceInput.dataset.key = "fixed-price-" + idx;
+    priceInput.addEventListener("input", () => { t.price = Number(priceInput.value) || 0; onFixedLineEdited(idx); saveState(); });
+    priceWrap.appendChild(priceInput);
+    const hint = document.createElement("div");
+    hint.className = "hint";
+    hint.dataset.key = "fixed-suggested-" + idx;
+    hint.textContent = "sugg. " + fmtMoney(line.suggestedPrice);
+    priceWrap.appendChild(hint);
+    tr.appendChild(el("td", { class: "num" }, priceWrap));
+
+    tr.appendChild(el("td", { class: "num", "data-key": "fixed-marginpill-" + idx }, el("span", { class: "pill " + marginPillClass(line.margin) }, line.price > 0 ? fmtPct(line.margin) : "—")));
+
+    const rm = el("button", { class: "remove-btn", title: "Remove line" }, "×");
+    rm.addEventListener("click", () => { state.fixedLines.splice(idx, 1); renderAll(); saveState(); });
+    tr.appendChild(el("td", {}, rm));
+
+    body.appendChild(tr);
+  });
+}
+
+// Called when a Fixed Bid row's hours or price changes. Patches this row's
+// computed cells directly (line cost, suggested-price hint, margin) without
+// rebuilding the table.
+function onFixedLineEdited(idx) {
+  const lines = computeFixedLines();
+  const line = lines[idx];
+  if (line) {
+    const costCell = document.querySelector('[data-key="fixed-linecost-' + idx + '"]');
+    const suggestedHint = document.querySelector('[data-key="fixed-suggested-' + idx + '"]');
+    const marginCell = document.querySelector('[data-key="fixed-marginpill-' + idx + '"]');
+    if (costCell) costCell.textContent = fmtMoney(line.lineCost);
+    if (suggestedHint) suggestedHint.textContent = "sugg. " + fmtMoney(line.suggestedPrice);
+    if (marginCell) {
+      marginCell.innerHTML = "";
+      marginCell.appendChild(el("span", { class: "pill " + marginPillClass(line.margin) }, line.price > 0 ? fmtPct(line.margin) : "—"));
+    }
+  }
+  renderAll({ skipFixed: true });
+}
+
+function renderProjectModeCards() {
+  const wrap = document.getElementById("projectModeCards");
+  wrap.innerHTML = "";
+  PROJECT_MODES.forEach(m => {
+    const card = el("div", { class: "track-card" + (state.projectMode === m.key ? " selected" : "") }, [
+      el("div", { class: "tc-radio" }),
+      el("div", { class: "tc-title" }, m.label),
+      el("div", { class: "tc-desc" }, m.desc),
+    ]);
+    card.addEventListener("click", () => {
+      state.projectMode = m.key;
+      renderAll(); saveState();
+    });
+    wrap.appendChild(card);
+  });
+}
+
+function updateProjectModeVisibility() {
+  const hourlyCard = document.getElementById("hourlyTeamCard");
+  const fixedCard = document.getElementById("fixedTeamCard");
+  const detailModeCard = document.getElementById("hourlyDetailModeCard");
+  const weeklyCard = document.getElementById("weeklyGridCard");
+  const isHourly = state.projectMode !== "fixed";
+  if (hourlyCard) hourlyCard.style.display = isHourly ? "" : "none";
+  if (fixedCard) fixedCard.style.display = isHourly ? "none" : "";
+  if (detailModeCard) detailModeCard.style.display = isHourly ? "" : "none";
+  const isWeekly = isHourly && state.hourlyDetailMode === "weekly";
+  if (weeklyCard) weeklyCard.style.display = isWeekly ? "" : "none";
+  const sub = document.getElementById("hourlyTeamCardSub");
+  if (sub) sub.textContent = isWeekly
+    ? "Phase totals below are computed from the Weekly timeline grid — edit hours there."
+    : "Add each resource, pick a rate class, then allocate their hours across phases.";
+}
+
+function renderHourlyDetailModeCards() {
+  const wrap = document.getElementById("hourlyDetailModeCards");
+  if (!wrap) return;
+  wrap.innerHTML = "";
+  HOURLY_DETAIL_MODES.forEach(m => {
+    const card = el("div", { class: "track-card" + (state.hourlyDetailMode === m.key ? " selected" : "") }, [
+      el("div", { class: "tc-radio" }),
+      el("div", { class: "tc-title" }, m.label),
+      el("div", { class: "tc-desc" }, m.desc),
+    ]);
+    card.addEventListener("click", () => {
+      state.hourlyDetailMode = m.key;
+      if (m.key === "weekly") {
+        const weeks = buildProjectWeeks();
+        state.team.forEach(t => ensureResourceWeekly(t, weeks));
+      }
+      renderAll(); saveState();
+    });
+    wrap.appendChild(card);
+  });
+}
+
+function renderProjectRangeFields() {
+  const r = state.projectRange;
+  document.getElementById("range_cost_low").value = r.costLowPct;
+  document.getElementById("range_cost_high").value = r.costHighPct;
+  document.getElementById("range_hours_low").value = r.hoursLowPct;
+  document.getElementById("range_hours_high").value = r.hoursHighPct;
+}
+
+function renderProjectRangeKpis() {
+  const range = computeProjectRange();
+  const body = document.getElementById("projectRangeTable");
+  body.innerHTML = "";
+  body.appendChild(el("tr", {}, [
+    el("td", {}, "Cost"),
+    el("td", { class: "num" }, fmtMoney(range.costLow)),
+    el("td", { class: "num" }, fmtMoney(range.costHigh)),
+  ]));
+  body.appendChild(el("tr", {}, [
+    el("td", {}, "Hours"),
+    el("td", { class: "num" }, Math.round(range.hoursLow).toLocaleString("en-US")),
+    el("td", { class: "num" }, Math.round(range.hoursHigh).toLocaleString("en-US")),
+  ]));
+  body.appendChild(el("tr", {}, [
+    el("td", {}, "Margin"),
+    el("td", { class: "num" }, fmtPct(range.marginAtCostLow)),
+    el("td", { class: "num" }, fmtPct(range.marginAtCostHigh)),
+  ]));
+}
+
+function renderProjectKpis() {
+  const totals = computeProjectTotals();
+  const approval = marginApproval(totals.margin);
+  const wrap = document.getElementById("projectKpis");
+  wrap.innerHTML = "";
+  wrap.appendChild(kpiCard("Project price", fmtMoney(totals.totalPrice)));
+  wrap.appendChild(kpiCard("Project hours", Math.round(totals.totalHours).toLocaleString("en-US"), "grey"));
+  wrap.appendChild(kpiCard("Margin", fmtPct(totals.margin), "navy"));
+  const approvalKpi = kpiCard(approval.label, "", "cyan");
+  approvalKpi.querySelector(".label").textContent = "Approval status";
+  approvalKpi.querySelector(".value").textContent = approval.label;
+  approvalKpi.querySelector(".value").classList.add("small");
+  wrap.appendChild(approvalKpi);
+}
+
+function renderGantt(containerId, phasesData) {
+  const width = 900;
+  const rowH = 46;
+  const height = rowH * phasesData.length + 60;
+  const marginLeft = 110;
+  const marginRight = 20;
+  const chartW = width - marginLeft - marginRight;
+
+  const minDate = phasesData[0].start;
+  const maxDate = phasesData[phasesData.length - 1].end;
+  const totalMs = Math.max(1, maxDate - minDate);
+  function xFor(d) { return marginLeft + ((d - minDate) / totalMs) * chartW; }
+
+  let svg = `<svg viewBox="0 0 ${width} ${height}" width="100%" style="max-width:${width}px;font-family:Arial,Helvetica,sans-serif;">`;
+  svg += `<rect x="0" y="0" width="${width}" height="${height}" fill="#ffffff"/>`;
+
+  phasesData.forEach((seg, i) => {
+    const y = 30 + i * rowH;
+    const x1 = xFor(seg.start), x2 = xFor(seg.end);
+    const w = Math.max(2, x2 - x1);
+    const color = PHASE_COLORS[seg.key];
+    svg += `<text x="0" y="${y + rowH / 2 + 4}" font-size="12" fill="#323232" font-weight="bold">${seg.label}</text>`;
+    svg += `<rect x="${x1}" y="${y + 8}" width="${w}" height="${rowH - 22}" rx="6" fill="${color}"></rect>`;
+    svg += `<text x="${x1 + w / 2}" y="${y + rowH / 2 + 4}" font-size="11" fill="#ffffff" text-anchor="middle">${seg.weeks} wk${seg.weeks === 1 ? "" : "s"}</text>`;
+
+    if (seg.sprintInfo && seg.sprintInfo.sprints > 1) {
+      seg.sprintInfo.sprintStarts.forEach((sd, si) => {
+        if (si === 0) return;
+        const sx = xFor(sd);
+        svg += `<line x1="${sx}" y1="${y + 6}" x2="${sx}" y2="${y + rowH - 12}" stroke="#ffffff" stroke-width="1" stroke-dasharray="2,2" opacity="0.6"></line>`;
+      });
+    }
+    svg += `<text x="${marginLeft}" y="${y + rowH + 2}" font-size="9.5" fill="#595959">${fmtDate(seg.start)}</text>`;
+    svg += `<text x="${xFor(seg.end)}" y="${y + rowH + 2}" font-size="9.5" fill="#595959" text-anchor="end">${fmtDate(seg.end)}</text>`;
+  });
+
+  svg += `</svg>`;
+
+  const container = document.getElementById(containerId);
+  if (container) {
+    container.innerHTML = svg;
+    const legend = document.createElement("div");
+    legend.className = "legend";
+    PHASE_KEYS.forEach((k, i) => {
+      const item = document.createElement("span");
+      item.innerHTML = `<span class="phase-swatch" style="background:${PHASE_COLORS[k]}"></span>${PHASES[i]}`;
+      legend.appendChild(item);
+    });
+    container.appendChild(legend);
+  }
+  return svg;
+}
+
+/* ---- Managed Services track ---- */
+
+function renderMsFields() {
+  document.getElementById("ms_lead").value = state.ms.lead;
+  document.getElementById("ms_cadence").value = state.ms.cadence;
+  document.getElementById("ms_months").value = state.ms.months;
+  document.getElementById("ms_months_custom").value = state.ms.monthsCustom;
+  document.getElementById("ms_months_custom_wrap").style.display = state.ms.months === "custom" ? "block" : "none";
+  document.getElementById("ms_qbr").value = state.ms.qbr;
+}
+
+function renderMsTiersTable() {
+  const body = document.getElementById("msTiersBody");
+  body.innerHTML = "";
+  const tiers = computeMsTiers();
+  tiers.forEach(tier => {
+    const rateSel = document.createElement("select");
+    rateSel.dataset.key = "ms-rate-" + tier.key;
+    state.rates.forEach(r => {
+      const opt = document.createElement("option");
+      opt.value = r.name; opt.textContent = r.name;
+      if (r.name === tier.rateClassName) opt.selected = true;
+      rateSel.appendChild(opt);
+    });
+    rateSel.addEventListener("change", () => {
+      state.ms.rateClass[tier.key] = rateSel.value;
+      renderAll(); saveState();
+    });
+
+    const hrsInput = document.createElement("input");
+    hrsInput.type = "text"; hrsInput.inputMode = "decimal"; hrsInput.value = tier.hrsPerWeek;
+    hrsInput.style.textAlign = "right";
+    hrsInput.dataset.key = "ms-hours-" + tier.key;
+    if (!tier.isStandard) hrsInput.classList.add("editable");
+    hrsInput.addEventListener("input", () => {
+      state.ms.hours[tier.key] = Number(hrsInput.value) || 0;
+      onMsHoursEdited(tier.key);
+      saveState();
+    });
+
+    const tr = el("tr", {}, [
+      el("td", { "data-key": "ms-label-" + tier.key }, tier.label + (tier.hrsPerWeek > 0 && !tier.isStandard ? " ⚠" : "")),
+      el("td", {}, rateSel),
+      el("td", { class: "num" }, hrsInput),
+      el("td", { class: "num" }, "$" + tier.rate.toFixed(0)),
+      el("td", { class: "num" }, "$" + tier.cost.toFixed(2)),
+      el("td", { class: "num", "data-key": "ms-weeklyrev-" + tier.key }, fmtMoney(tier.weeklyRevenue)),
+      el("td", { class: "num", "data-key": "ms-marginpill-" + tier.key }, el("span", { class: "pill " + marginPillClass(tier.margin) }, tier.hrsPerWeek > 0 ? fmtPct(tier.margin) : "—")),
+    ]);
+    body.appendChild(tr);
+  });
+}
+
+// Called when an MS delivery tier's hrs/week changes. Patches this row's computed
+// cells directly (weekly revenue, margin, the ⚠ label suffix) without rebuilding
+// the table.
+function onMsHoursEdited(tierKey) {
+  const tiers = computeMsTiers();
+  const tier = tiers.find(t => t.key === tierKey);
+  if (tier) {
+    const labelCell = document.querySelector('[data-key="ms-label-' + tierKey + '"]');
+    const revCell = document.querySelector('[data-key="ms-weeklyrev-' + tierKey + '"]');
+    const marginCell = document.querySelector('[data-key="ms-marginpill-' + tierKey + '"]');
+    if (labelCell) labelCell.textContent = tier.label + (tier.hrsPerWeek > 0 && !tier.isStandard ? " ⚠" : "");
+    if (revCell) revCell.textContent = fmtMoney(tier.weeklyRevenue);
+    if (marginCell) {
+      marginCell.innerHTML = "";
+      marginCell.appendChild(el("span", { class: "pill " + marginPillClass(tier.margin) }, tier.hrsPerWeek > 0 ? fmtPct(tier.margin) : "—"));
+    }
+  }
+  renderAll({ skipMs: true });
+}
+
+function renderMsKpis() {
+  const totals = computeMsTotals();
+  const approval = marginApproval(totals.margin);
+  const wrap = document.getElementById("msKpis");
+  wrap.innerHTML = "";
+  wrap.appendChild(kpiCard("Monthly invoice", fmtMoney(totals.monthlyInvoice)));
+  wrap.appendChild(kpiCard("Contract value (" + totals.months + " mo)", fmtMoney(totals.totalRevenue), "grey"));
+  wrap.appendChild(kpiCard("Blended rate / hr", "$" + totals.blendedRate.toFixed(0), "navy"));
+  const approvalKpi = kpiCard("Margin", fmtPct(totals.margin), "cyan");
+  wrap.appendChild(approvalKpi);
+  if (totals.anyNonStandard) {
+    const warn = el("div", { class: "kpi", style: "border-top-color:#B8860B;grid-column:1/-1;" }, [
+      el("div", { class: "label" }, "Heads up"),
+      el("div", { class: "value small" }, "One or more tiers use a non-standard weekly-hours commitment — this needs approval before it's quoted."),
+    ]);
+    wrap.appendChild(warn);
+  }
+}
+
+/* ---- Ad-Hoc T&M track ---- */
+
+function renderTmFields() {
+  document.getElementById("tm_requests").value = state.tm.requests;
+  document.getElementById("tm_approval").value = state.tm.approval;
+}
+
+function renderTmTable() {
+  const body = document.getElementById("tmBody");
+  body.innerHTML = "";
+  const { lines } = computeTmTotals();
+
+  state.tm.lines.forEach((t, idx) => {
+    const line = lines[idx];
+    const tr = el("tr");
+
+    const rateSel = document.createElement("select");
+    rateSel.dataset.key = "tm-rate-" + idx;
+    state.rates.forEach(r => {
+      const opt = document.createElement("option");
+      opt.value = r.name; opt.textContent = r.name;
+      if (r.name === t.rateClass) opt.selected = true;
+      rateSel.appendChild(opt);
+    });
+    rateSel.addEventListener("change", () => { t.rateClass = rateSel.value; renderAll(); saveState(); });
+    tr.appendChild(el("td", {}, rateSel));
+
+    const slaSel = document.createElement("select");
+    slaSel.dataset.key = "tm-sla-" + idx;
+    SLA_TIERS.forEach(s => {
+      const opt = document.createElement("option");
+      opt.value = s.value; opt.textContent = s.label;
+      if (s.value === String(t.sla)) opt.selected = true;
+      slaSel.appendChild(opt);
+    });
+    slaSel.addEventListener("change", () => { t.sla = slaSel.value; renderAll(); saveState(); });
+    tr.appendChild(el("td", {}, slaSel));
+
+    const hrsInput = document.createElement("input");
+    hrsInput.type = "text"; hrsInput.inputMode = "decimal"; hrsInput.value = t.hours;
+    hrsInput.style.textAlign = "right";
+    hrsInput.dataset.key = "tm-hours-" + idx;
+    hrsInput.addEventListener("input", () => { t.hours = Number(hrsInput.value) || 0; onTmHoursEdited(idx); saveState(); });
+    tr.appendChild(el("td", { class: "num" }, hrsInput));
+
+    tr.appendChild(el("td", { class: "num" }, "$" + line.cost.toFixed(2)));
+    tr.appendChild(el("td", { class: "num" }, "$" + line.price.toFixed(2)));
+    tr.appendChild(el("td", { class: "num", "data-key": "tm-linecost-" + idx }, fmtMoney(line.lineCost)));
+    tr.appendChild(el("td", { class: "num", "data-key": "tm-lineprice-" + idx }, fmtMoney(line.linePrice)));
+    tr.appendChild(el("td", { class: "num", "data-key": "tm-marginpill-" + idx }, el("span", { class: "pill " + marginPillClass(line.margin) }, fmtPct(line.margin))));
+
+    const rm = el("button", { class: "remove-btn", title: "Remove line" }, "×");
+    rm.addEventListener("click", () => { state.tm.lines.splice(idx, 1); renderAll(); saveState(); });
+    tr.appendChild(el("td", {}, rm));
+
+    body.appendChild(tr);
+  });
+}
+
+// Called when a T&M line's hours change. Patches this row's computed cells
+// directly (line cost/price, margin) without rebuilding the table.
+function onTmHoursEdited(idx) {
+  const { lines } = computeTmTotals();
+  const line = lines[idx];
+  if (line) {
+    const costCell = document.querySelector('[data-key="tm-linecost-' + idx + '"]');
+    const priceCell = document.querySelector('[data-key="tm-lineprice-' + idx + '"]');
+    const marginCell = document.querySelector('[data-key="tm-marginpill-' + idx + '"]');
+    if (costCell) costCell.textContent = fmtMoney(line.lineCost);
+    if (priceCell) priceCell.textContent = fmtMoney(line.linePrice);
+    if (marginCell) {
+      marginCell.innerHTML = "";
+      marginCell.appendChild(el("span", { class: "pill " + marginPillClass(line.margin) }, fmtPct(line.margin)));
+    }
+  }
+  renderAll({ skipTm: true });
+}
+
+function renderTmKpis() {
+  const totals = computeTmTotals();
+  const approval = marginApproval(totals.margin);
+  const wrap = document.getElementById("tmKpis");
+  wrap.innerHTML = "";
+  wrap.appendChild(kpiCard("Block price", fmtMoney(totals.totalPrice)));
+  wrap.appendChild(kpiCard("Block hours", Math.round(totals.totalHours).toLocaleString("en-US"), "grey"));
+  wrap.appendChild(kpiCard("Margin", fmtPct(totals.margin), "navy"));
+  const approvalKpi = kpiCard("Approval status", "", "cyan");
+  approvalKpi.querySelector(".value").textContent = approval.label;
+  approvalKpi.querySelector(".value").classList.add("small");
+  wrap.appendChild(approvalKpi);
+}
+
+/* ---- Summary tab ---- */
+
+function fillKpiRow(containerId, items) {
+  const wrap = document.getElementById(containerId);
+  wrap.innerHTML = "";
+  items.forEach(([label, value, cls]) => wrap.appendChild(kpiCard(label, value, cls)));
+}
+
+function renderRollup() {
+  const rollup = computeRollup();
+  const body = document.getElementById("rollupBody");
+  body.innerHTML = "";
+
+  rollup.rows.forEach(r => {
+    const cb = document.createElement("input");
+    cb.type = "checkbox";
+    cb.checked = r.included;
+    cb.addEventListener("change", () => {
+      state.rollupOptions[r.key] = cb.checked;
+      renderAll(); saveState();
+    });
+
+    const tr = el("tr", { style: r.included ? "" : "opacity:0.45;" }, [
+      el("td", {}, cb),
+      el("td", {}, r.label),
+      el("td", { class: "num" }, fmtMoney(r.price)),
+      el("td", { class: "num" }, fmtMoney(r.cost)),
+      el("td", { class: "num" }, Math.round(r.hours).toLocaleString("en-US")),
+      el("td", { class: "num" }, r.price > 0 ? el("span", { class: "pill " + marginPillClass(r.margin) }, fmtPct(r.margin)) : "—"),
+    ]);
+    body.appendChild(tr);
+  });
+
+  body.appendChild(el("tr", { style: "font-weight:bold;border-top:2px solid #EAEAEA;" }, [
+    el("td", {}, ""),
+    el("td", {}, "Total"),
+    el("td", { class: "num" }, fmtMoney(rollup.totalPrice)),
+    el("td", { class: "num" }, fmtMoney(rollup.totalCost)),
+    el("td", { class: "num" }, Math.round(rollup.totalHours).toLocaleString("en-US")),
+    el("td", { class: "num" }, fmtPct(rollup.totalMargin)),
+  ]));
+}
+
+function renderSummary() {
+  const disc = state.discovery;
+  document.getElementById("sum_disc_fee").textContent = fmtMoney(disc.fee);
+  const track = TRACKS.find(t => t.key === state.activeTrack);
+  document.getElementById("sum_disc_credit").textContent = track ? track.creditsTo : "—";
+  document.getElementById("sum_disc_status").textContent = disc.status;
+  document.getElementById("sum_disc_track").textContent = track ? track.label : "—";
+
+  const discCalc = computeDiscoveryDelivery();
+  const discApproval = marginApproval(discCalc.margin);
+  document.getElementById("sum_disc_cost").textContent = fmtMoney(discCalc.cost);
+  document.getElementById("sum_disc_margin").textContent = fmtPct(discCalc.margin);
+  document.getElementById("sum_disc_approval").textContent = discApproval.label;
+
+  const pt = computeProjectTotals();
+  const pApproval = marginApproval(pt.margin);
+  fillKpiRow("summaryProjectKpis", [
+    ["Project price", fmtMoney(pt.totalPrice)],
+    ["Project hours", Math.round(pt.totalHours).toLocaleString("en-US"), "grey"],
+    ["Margin", fmtPct(pt.margin), "navy"],
+    ["Approval", pApproval.label, "cyan"],
+  ]);
+
+  const mt = computeMsTotals();
+  const mApproval = marginApproval(mt.margin);
+  fillKpiRow("summaryMsKpis", [
+    ["Monthly invoice", fmtMoney(mt.monthlyInvoice)],
+    ["Contract value", fmtMoney(mt.totalRevenue), "grey"],
+    ["Margin", fmtPct(mt.margin), "navy"],
+    ["Approval", mApproval.label, "cyan"],
+  ]);
+
+  const tt = computeTmTotals();
+  const tApproval = marginApproval(tt.margin);
+  fillKpiRow("summaryTmKpis", [
+    ["Block price", fmtMoney(tt.totalPrice)],
+    ["Block hours", Math.round(tt.totalHours).toLocaleString("en-US"), "grey"],
+    ["Margin", fmtPct(tt.margin), "navy"],
+    ["Approval", tApproval.label, "cyan"],
+  ]);
+}
+
+function updateTrackDots() {
+  const pt = computeProjectTotals();
+  const mt = computeMsTotals();
+  const tt = computeTmTotals();
+  document.getElementById("dot-project").classList.toggle("on", pt.totalHours > 0 || pt.totalPrice > 0);
+  document.getElementById("dot-ms").classList.toggle("on", mt.totalHours > 0);
+  document.getElementById("dot-tm").classList.toggle("on", tt.totalHours > 0);
+}
+
+function renderAll(opts) {
+  opts = opts || {};
+  // Preserve focus + cursor position across the rebuild below — the table renderers
+  // wipe and recreate their rows on every keystroke (innerHTML = ""), which would
+  // otherwise steal focus from whatever input the user is actively typing into.
+  // Callers that already know which table currently holds focus (see onRateEdited,
+  // etc.) pass a skip flag so that table isn't touched at all during the edit.
+  const active = document.activeElement;
+  const focusKey = (active && active.dataset) ? active.dataset.key : null;
+  const selStart = (active && typeof active.selectionStart === "number") ? active.selectionStart : null;
+  const selEnd = (active && typeof active.selectionEnd === "number") ? active.selectionEnd : null;
+
+  renderTrackCards();
+  renderDiscoveryCreditDisplay();
+  renderDiscoveryDeliveryFields();
+  if (!opts.skipRates) renderRatesTable();
+  renderProjectModeCards();
+  renderHourlyDetailModeCards();
+  updateProjectModeVisibility();
+  if (!opts.skipTeam) renderTeamTable();
+  if (!opts.skipFixed) renderFixedTable();
+  if (!opts.skipWeekly) renderWeeklyGrid();
+  renderProjectRangeFields();
+  renderProjectKpis();
+  renderProjectRangeKpis();
+  const segs = buildTimelinePhases();
+  renderGantt("ganttWrap", segs);
+  renderMsFields();
+  if (!opts.skipMs) renderMsTiersTable();
+  renderMsKpis();
+  renderTmFields();
+  if (!opts.skipTm) renderTmTable();
+  renderTmKpis();
+  renderRollup();
+  renderSummary();
+  updateTrackDots();
+
+  if (focusKey) {
+    const el2 = document.querySelector('[data-key="' + focusKey + '"]');
+    if (el2) {
+      el2.focus();
+      if (selStart != null && el2.setSelectionRange) {
+        try { el2.setSelectionRange(selStart, selEnd); } catch (e) { /* not a text-selectable input */ }
+      }
+    }
+  }
+}
+
+/* ============================== Tabs ================================ */
+
+function setupTabs() {
+  document.querySelectorAll(".tab").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".tab").forEach(b => b.classList.remove("active"));
+      document.querySelectorAll(".panel").forEach(p => p.classList.remove("active"));
+      btn.classList.add("active");
+      document.getElementById("panel-" + btn.dataset.tab).classList.add("active");
+    });
+  });
+}
+
+/* ============================== PDF Export ============================== */
+
+function escapeHtml(str) {
+  return String(str).replace(/[&<>"']/g, m => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[m]));
+}
+
+function buildStandaloneGanttSvg(phasesData, width) {
+  const rowH = 50;
+  const height = rowH * phasesData.length + 50;
+  const marginLeft = 110, marginRight = 20;
+  const chartW = width - marginLeft - marginRight;
+  const minDate = phasesData[0].start;
+  const maxDate = phasesData[phasesData.length - 1].end;
+  const totalMs = Math.max(1, maxDate - minDate);
+  function xFor(d) { return marginLeft + ((d - minDate) / totalMs) * chartW; }
+
+  let svg = `<svg viewBox="0 0 ${width} ${height}" width="100%" xmlns="http://www.w3.org/2000/svg" style="font-family:Arial,Helvetica,sans-serif;">`;
+  svg += `<rect x="0" y="0" width="${width}" height="${height}" fill="#ffffff"/>`;
+  phasesData.forEach((seg, i) => {
+    const y = 20 + i * rowH;
+    const x1 = xFor(seg.start), x2 = xFor(seg.end);
+    const w = Math.max(2, x2 - x1);
+    const color = PHASE_COLORS[seg.key];
+    svg += `<text x="0" y="${y + rowH / 2 + 4}" font-size="13" fill="#323232" font-weight="bold">${seg.label}</text>`;
+    svg += `<rect x="${x1}" y="${y + 8}" width="${w}" height="${rowH - 22}" rx="6" fill="${color}"></rect>`;
+    svg += `<text x="${x1 + w / 2}" y="${y + rowH / 2 + 4}" font-size="11" fill="#ffffff" text-anchor="middle">${seg.weeks} wk${seg.weeks === 1 ? "" : "s"}</text>`;
+    if (seg.sprintInfo && seg.sprintInfo.sprints > 1) {
+      seg.sprintInfo.sprintStarts.forEach((sd, si) => {
+        if (si === 0) return;
+        const sx = xFor(sd);
+        svg += `<line x1="${sx}" y1="${y + 6}" x2="${sx}" y2="${y + rowH - 12}" stroke="#ffffff" stroke-width="1" stroke-dasharray="2,2" opacity="0.6"></line>`;
+      });
+    }
+    svg += `<text x="${marginLeft}" y="${y + rowH + 2}" font-size="10" fill="#595959">${fmtDate(seg.start)}</text>`;
+    svg += `<text x="${xFor(seg.end)}" y="${y + rowH + 2}" font-size="10" fill="#595959" text-anchor="end">${fmtDate(seg.end)}</text>`;
+  });
+  svg += `</svg>`;
+  return svg;
+}
+
+function pdfHeader(title, sub) {
+  return `
+    <div class="pg-header">
+      <img src="${window.__DC_LOGO__}" class="pg-logo">
+      <div class="pg-header-meta">
+        <div class="pg-doc-title">${escapeHtml(title)}</div>
+        <div class="pg-doc-sub">${escapeHtml(sub)}</div>
+      </div>
+    </div>`;
+}
+function pdfFooter() {
+  return `<div class="pg-footer">Demand Chain — Confidential — © ${new Date().getFullYear()} Demand Chain | www.demandchain.com</div>`;
+}
+function pdfKpis(items) {
+  return `<div class="pg-kpis">${items.map(([l, v]) => `<div class="pg-kpi"><div class="l">${escapeHtml(l)}</div><div class="v">${escapeHtml(v)}</div></div>`).join("")}</div>`;
+}
+
+function buildCoverAndDiscoveryPage() {
+  const p = state.project;
+  const disc = state.discovery;
+  const track = TRACKS.find(t => t.key === state.activeTrack);
+  const today = new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
+  const rollup = computeRollup();
+  const rollupRows = rollup.rows.map(r => `
+    <tr${r.included ? "" : ' style="opacity:0.45;"'}>
+      <td>${escapeHtml(r.label)}${r.included ? "" : " (excluded)"}</td>
+      <td class="num">${fmtMoney(r.price)}</td>
+      <td class="num">${fmtMoney(r.cost)}</td>
+      <td class="num">${Math.round(r.hours).toLocaleString("en-US")}</td>
+      <td class="num">${r.price > 0 ? fmtPct(r.margin) : "—"}</td>
+    </tr>`).join("");
+  const rollupBlock = `
+    <h2 class="pg-h2">Engagement rollup</h2>
+    <table class="pg-table">
+      <thead><tr><th>Service</th><th class="num">Price</th><th class="num">Cost</th><th class="num">Hours</th><th class="num">Margin</th></tr></thead>
+      <tbody>${rollupRows}
+        <tr class="pg-total"><td>Total</td><td class="num">${fmtMoney(rollup.totalPrice)}</td><td class="num">${fmtMoney(rollup.totalCost)}</td><td class="num">${Math.round(rollup.totalHours).toLocaleString("en-US")}</td><td class="num">${fmtPct(rollup.totalMargin)}</td></tr>
+      </tbody>
+    </table>
+  `;
+  const discCalc = computeDiscoveryDelivery();
+  const discApproval = marginApproval(discCalc.margin);
+  const discoveryBlock = state.pdfOptions.discovery ? `
+    <h2 class="pg-h2">Recommended track</h2>
+    <p class="pg-note" style="font-size:12.5px;">Every engagement enters through paid discovery. Based on discovery findings, this proposal recommends the <b>${escapeHtml(track ? track.label : "—")}</b> track — ${escapeHtml(track ? track.desc : "")}</p>
+    ${pdfKpis([
+      ["Discovery fee", fmtMoney(disc.fee)],
+      ["Sessions", String(disc.sessions)],
+      ["Credits toward", track ? track.creditsTo : "—"],
+      ["Delivery cost", fmtMoney(discCalc.cost)],
+      ["Margin (target 60%)", fmtPct(discCalc.margin)],
+      ["Approval", discApproval.label],
+    ])}
+    <p class="pg-note">Discovery is non-refundable but always credits forward against the client's chosen track. The fee is earned through delivery of the discovery report — not contingent on the client proceeding to any track.</p>
+  ` : "";
+  return `
+  <div class="pg">
+    ${pdfHeader("Engagement Scoping & Estimate", "Prepared " + today)}
+    <div class="pg-title-block">
+      <h1>${escapeHtml(p.project || "Untitled Engagement")}</h1>
+      <div class="pg-account">${escapeHtml(p.account || "")}</div>
+    </div>
+    <div class="pg-info-grid">
+      <div><span class="k">Sales owner</span><span class="v">${escapeHtml(p.salesowner || "—")}</span></div>
+      <div><span class="k">Sales engineer</span><span class="v">${escapeHtml(p.se || "—")}</span></div>
+      <div><span class="k">Scope approver</span><span class="v">${escapeHtml(p.scopeappr || "—")}</span></div>
+      <div><span class="k">Financial approver</span><span class="v">${escapeHtml(p.finappr || "—")}</span></div>
+      <div><span class="k">Anticipated start</span><span class="v">${p.startdate ? fmtDate(new Date(p.startdate + "T00:00:00")) : "—"}</span></div>
+      <div><span class="k">Legal approver</span><span class="v">${escapeHtml(p.legalappr || "—")}</span></div>
+    </div>
+    ${rollupBlock}
+    ${discoveryBlock}
+    ${pdfFooter()}
+  </div>`;
+}
+
+function buildProjectPages() {
+  if (!state.pdfOptions.project) return "";
+  const totals = computeProjectTotals();
+  if (totals.totalHours <= 0 && totals.totalPrice <= 0) return "";
+  const approval = marginApproval(totals.margin);
+  const phaseSummary = computeActivePhaseSummary();
+  const range = computeProjectRange();
+  const segs = buildTimelinePhases();
+  const svgMarkup = buildStandaloneGanttSvg(segs, 950);
+  const p = state.project;
+  const isFixed = totals.mode === "fixed";
+  const pricingLabel = isFixed ? "Fixed Bid" : "Time & Materials";
+
+  const detailRows = isFixed
+    ? totals.lines.map(l => `
+      <tr>
+        <td>${escapeHtml(l.name || "Untitled")}</td>
+        <td>${escapeHtml(l.deliverable || "")}</td>
+        <td>${escapeHtml(PHASES[PHASE_KEYS.indexOf(l.phase)] || "")}</td>
+        <td class="num">${Math.round(l.hours)}</td>
+        <td class="num">${fmtMoney(l.price)}</td>
+      </tr>`).join("")
+    : totals.lines.map(l => `
+      <tr>
+        <td>${escapeHtml(l.role)}</td>
+        <td>${escapeHtml(l.rateClass)}</td>
+        <td class="num">${Math.round(l.totalHours)}</td>
+        <td class="num">$${l.price.toFixed(0)}</td>
+        <td class="num">${fmtMoney(l.linePrice)}</td>
+      </tr>`).join("");
+
+  const detailHeader = isFixed
+    ? `<tr><th>Functionality</th><th>Deliverable</th><th>Phase</th><th class="num">Est. hours</th><th class="num">Fixed price</th></tr>`
+    : `<tr><th>Role</th><th>Rate class</th><th class="num">Hours</th><th class="num">Price/hr</th><th class="num">Line price</th></tr>`;
+
+  const detailTitle = isFixed ? "Deliverables" : "Project team";
+
+  const phaseRows = phaseSummary.map(ph => `
+    <tr>
+      <td><span class="sw" style="background:${PHASE_COLORS[ph.key]}"></span>${ph.label}</td>
+      <td class="num">${Math.round(ph.hours)}</td>
+      <td class="num">${fmtMoney(ph.price)}</td>
+    </tr>`).join("");
+
+  return `
+  <div class="pg">
+    ${pdfHeader("Project — Scoped Deliverable", escapeHtml(p.project || ""))}
+    <p class="pg-note" style="font-size:12.5px;">Pricing model: <b>${pricingLabel}</b></p>
+    ${pdfKpis([
+      ["Project price", fmtMoney(totals.totalPrice)],
+      ["Project hours", Math.round(totals.totalHours).toLocaleString("en-US")],
+      ["Margin", fmtPct(totals.margin)],
+      ["Approval", approval.label],
+    ])}
+    <h2 class="pg-h2">Estimate range</h2>
+    <table class="pg-table">
+      <thead><tr><th></th><th class="num">Low estimate</th><th class="num">High estimate</th></tr></thead>
+      <tbody>
+        <tr><td>Cost</td><td class="num">${fmtMoney(range.costLow)}</td><td class="num">${fmtMoney(range.costHigh)}</td></tr>
+        <tr><td>Hours</td><td class="num">${Math.round(range.hoursLow).toLocaleString("en-US")}</td><td class="num">${Math.round(range.hoursHigh).toLocaleString("en-US")}</td></tr>
+        <tr><td>Margin</td><td class="num">${fmtPct(range.marginAtCostLow)}</td><td class="num">${fmtPct(range.marginAtCostHigh)}</td></tr>
+      </tbody>
+    </table>
+    <h2 class="pg-h2">Estimate by phase</h2>
+    <table class="pg-table">
+      <thead><tr><th>Phase</th><th class="num">Hours</th><th class="num">Price</th></tr></thead>
+      <tbody>${phaseRows}
+        <tr class="pg-total"><td>Total</td><td class="num">${Math.round(totals.totalHours)}</td><td class="num">${fmtMoney(totals.totalPrice)}</td></tr>
+      </tbody>
+    </table>
+    <h2 class="pg-h2">${detailTitle}</h2>
+    <table class="pg-table">
+      <thead>${detailHeader}</thead>
+      <tbody>${detailRows}</tbody>
+    </table>
+    ${pdfFooter()}
+  </div>
+  <div class="pg">
+    ${pdfHeader("Project — Delivery Timeline", escapeHtml(p.project || ""))}
+    <div class="pg-gantt">${svgMarkup}</div>
+    <div class="pg-legend">${PHASE_KEYS.map((k, i) => `<span><span class="sw" style="background:${PHASE_COLORS[k]}"></span>${PHASES[i]}</span>`).join("")}</div>
+    <p class="pg-note">P&amp;B reflects ${state.phases.pb_sprints} sprints × ${state.phases.sprint_len} weeks. Statement of Work governs final scope, timeline, and acceptance criteria.</p>
+    ${pdfFooter()}
+  </div>`;
+}
+
+function buildMsPage() {
+  if (!state.pdfOptions.ms) return "";
+  const totals = computeMsTotals();
+  if (totals.totalHours <= 0) return "";
+  const approval = marginApproval(totals.margin);
+  const p = state.project;
+  const rows = totals.tiers.filter(t => t.hrsPerWeek > 0).map(t => `
+    <tr>
+      <td>${escapeHtml(t.label)}</td>
+      <td class="num">${t.hrsPerWeek}</td>
+      <td class="num">$${t.rate.toFixed(0)}</td>
+      <td class="num">${Math.round(t.totalHours)}</td>
+      <td class="num">${fmtMoney(t.revenue)}</td>
+    </tr>`).join("");
+
+  return `
+  <div class="pg">
+    ${pdfHeader("Managed Services — Subscription", escapeHtml(p.project || ""))}
+    <p class="pg-note" style="font-size:12.5px;">Named engagement lead: <b>${escapeHtml(state.ms.lead || "TBD")}</b> · Cadence: ${escapeHtml(state.ms.cadence)} · QBR: ${escapeHtml(state.ms.qbr)} · Term: ${totals.months} months</p>
+    ${pdfKpis([
+      ["Monthly invoice", fmtMoney(totals.monthlyInvoice)],
+      ["Contract value", fmtMoney(totals.totalRevenue)],
+      ["Blended rate", "$" + totals.blendedRate.toFixed(0) + "/hr"],
+      ["Margin", fmtPct(totals.margin)],
+    ])}
+    <h2 class="pg-h2">Delivery mix</h2>
+    <table class="pg-table">
+      <thead><tr><th>Tier</th><th class="num">Hrs/wk</th><th class="num">Rate/hr</th><th class="num">Total hours</th><th class="num">Contract revenue</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+    <p class="pg-note">Approval status: ${escapeHtml(approval.label)}. Discovery fee credits toward the first month of subscription. Renewal and expansion are driven by quarterly business reviews.</p>
+    ${pdfFooter()}
+  </div>`;
+}
+
+function buildTmPage() {
+  if (!state.pdfOptions.tm) return "";
+  const totals = computeTmTotals();
+  if (totals.totalHours <= 0) return "";
+  const approval = marginApproval(totals.margin);
+  const p = state.project;
+  const tiersUsed = Array.from(new Set(totals.lines.map(l => slaLabelFor(l.sla)))).join(", ");
+  const rows = totals.lines.map(l => `
+    <tr>
+      <td>${escapeHtml(l.rateClass)}</td>
+      <td>${escapeHtml(slaLabelFor(l.sla))}</td>
+      <td class="num">${Math.round(l.hours)}</td>
+      <td class="num">$${l.price.toFixed(0)}</td>
+      <td class="num">${fmtMoney(l.linePrice)}</td>
+    </tr>`).join("");
+
+  return `
+  <div class="pg">
+    ${pdfHeader("Ad-Hoc T&M — Client Portal", escapeHtml(p.project || ""))}
+    <p class="pg-note" style="font-size:12.5px;">SLA tiers in this quote: <b>${escapeHtml(tiersUsed || "Standard")}</b> · Est. requests/month: ${escapeHtml(String(state.tm.requests))} · Fulfilled from the shared resource pool, no dedicated resource assigned.</p>
+    ${pdfKpis([
+      ["Block price", fmtMoney(totals.totalPrice)],
+      ["Block hours", Math.round(totals.totalHours).toLocaleString("en-US")],
+      ["Margin", fmtPct(totals.margin)],
+      ["Approval", approval.label],
+    ])}
+    <h2 class="pg-h2">Estimated lines</h2>
+    <table class="pg-table">
+      <thead><tr><th>Rate class</th><th>SLA tier</th><th class="num">Hours</th><th class="num">Price/hr</th><th class="num">Line price</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+    <p class="pg-note">This track replaces all unstructured T&amp;M and ad-hoc engagements. Any exception requires DC Leadership approval${state.tm.approval ? " (" + escapeHtml(state.tm.approval) + ")" : ""}. Discovery fee credits toward the SLA tier setup fee or first queue credit.</p>
+    ${pdfFooter()}
+  </div>`;
+}
+
+function buildPrintDocument() {
+  return buildCoverAndDiscoveryPage() + buildProjectPages() + buildMsPage() + buildTmPage();
+}
+
+function exportPdf() {
+  const printRoot = document.getElementById("printRoot");
+  printRoot.innerHTML = buildPrintDocument();
+
+  const style = document.createElement("style");
+  style.id = "printStyle";
+  style.textContent = `
+    @media print {
+      body * { visibility: hidden; }
+      #printRoot, #printRoot * { visibility: visible; }
+      #printRoot { display:block !important; position:absolute; left:0; top:0; width:100%; }
+      .pg { page-break-after: always; padding: 24px 34px; font-family: Arial, Helvetica, sans-serif; color:#323232; position:relative; min-height:9.5in;}
+      .pg:last-child { page-break-after: auto; }
+      .pg-header{ display:flex; align-items:center; justify-content:space-between; border-bottom:3px solid #912121; padding-bottom:10px; margin-bottom:18px;}
+      .pg-logo{ height:30px; }
+      .pg-header-meta{ text-align:right; }
+      .pg-doc-title{ font-weight:bold; font-size:14px; color:#323232;}
+      .pg-doc-sub{ font-size:11px; color:#595959;}
+      .pg-title-block h1{ font-size:22px; margin:0 0 2px; color:#323232;}
+      .pg-account{ font-size:13px; color:#595959; margin-bottom:14px;}
+      .pg-info-grid{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px 20px; margin-bottom:18px; font-size:11.5px;}
+      .pg-info-grid .k{ display:block; color:#595959; font-weight:bold; font-size:10px;}
+      .pg-info-grid .v{ display:block; color:#323232;}
+      .pg-kpis{ display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:20px;}
+      .pg-kpi{ border-top:3px solid #912121; padding:8px 10px; background:#F7F6F5; border-radius:6px;}
+      .pg-kpi .l{ font-size:9.5px; color:#595959; font-weight:bold;}
+      .pg-kpi .v{ font-size:15px; font-weight:bold; color:#323232;}
+      .pg-h2{ font-size:13px; color:#912121; border-bottom:1px solid #EAEAEA; padding-bottom:4px; margin:18px 0 8px;}
+      .pg-table{ width:100%; border-collapse:collapse; font-size:11.5px; margin-bottom:6px;}
+      .pg-table th{ text-align:left; font-size:10px; color:#595959; border-bottom:2px solid #EAEAEA; padding:5px 6px;}
+      .pg-table td{ padding:5px 6px; border-bottom:1px solid #EFEDEB;}
+      .pg-table .num{ text-align:right; }
+      .pg-total td{ font-weight:bold; border-top:2px solid #323232; }
+      .sw{ display:inline-block; width:9px; height:9px; border-radius:2px; margin-right:6px;}
+      .pg-gantt{ margin:10px 0; }
+      .pg-legend{ display:flex; gap:14px; font-size:11px; color:#595959; margin-bottom:14px;}
+      .pg-note{ font-size:10.5px; color:#595959; }
+      .pg-footer{ position:absolute; bottom:18px; left:34px; right:34px; font-size:9px; color:#8a8a8a; border-top:1px solid #EAEAEA; padding-top:6px;}
+      @page { size: letter; margin: 0.4in; }
+    }
+  `;
+  document.head.appendChild(style);
+  window.print();
+  setTimeout(() => {
+    style.remove();
+    printRoot.innerHTML = "";
+  }, 500);
+}
+
+/* ============================== Word (.docx) Export ============================== */
+
+function wEscape(s) {
+  return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
+// One paragraph of plain or styled text.
+function wPara(text, opts) {
+  opts = opts || {};
+  const rPr = `<w:rPr>${opts.bold ? "<w:b/>" : ""}${opts.color ? `<w:color w:val="${opts.color}"/>` : ""}${opts.size ? `<w:sz w:val="${opts.size}"/><w:szCs w:val="${opts.size}"/>` : ""}</w:rPr>`;
+  const pPr = `<w:pPr>${opts.align ? `<w:jc w:val="${opts.align}"/>` : ""}${opts.spacingAfter != null ? `<w:spacing w:after="${opts.spacingAfter}"/>` : ""}</w:pPr>`;
+  const text2 = text === "" ? "" : wEscape(text);
+  return `<w:p>${pPr}<w:r>${rPr}<w:t xml:space="preserve">${text2}</w:t></w:r></w:p>`;
+}
+
+// Section heading: red, bold, spaced.
+function wHeading(text) {
+  return wPara(text, { bold: true, color: "912121", size: 26, spacingAfter: 120 });
+}
+
+// Simple bordered table. headers: string[]. rows: string[][].
+function wTable(headers, rows) {
+  const totalWidth = 9000;
+  const colWidth = Math.floor(totalWidth / headers.length);
+  const borders = `<w:tblBorders>
+    <w:top w:val="single" w:sz="4" w:color="D8D5D2"/>
+    <w:left w:val="single" w:sz="4" w:color="D8D5D2"/>
+    <w:bottom w:val="single" w:sz="4" w:color="D8D5D2"/>
+    <w:right w:val="single" w:sz="4" w:color="D8D5D2"/>
+    <w:insideH w:val="single" w:sz="4" w:color="D8D5D2"/>
+    <w:insideV w:val="single" w:sz="4" w:color="D8D5D2"/>
+  </w:tblBorders>`;
+  function cell(text, bold, shade) {
+    const rPr = bold ? "<w:rPr><w:b/><w:sz w:val=\"18\"/></w:rPr>" : "<w:rPr><w:sz w:val=\"18\"/></w:rPr>";
+    const shd = shade ? `<w:shd w:val="clear" w:fill="${shade}"/>` : "";
+    return `<w:tc><w:tcPr><w:tcW w:w="${colWidth}" w:type="dxa"/>${shd}</w:tcPr><w:p><w:r>${rPr}<w:t xml:space="preserve">${wEscape(text)}</w:t></w:r></w:p></w:tc>`;
+  }
+  const headRow = `<w:tr>${headers.map(h => cell(h, true, "F7F6F5")).join("")}</w:tr>`;
+  const bodyRows = rows.map(r => `<w:tr>${r.map(c => cell(String(c))).join("")}</w:tr>`).join("");
+  const grid = headers.map(() => `<w:gridCol w:w="${colWidth}"/>`).join("");
+  return `<w:tbl><w:tblPr><w:tblW w:w="${totalWidth}" w:type="dxa"/>${borders}</w:tblPr><w:tblGrid>${grid}</w:tblGrid>${headRow}${bodyRows}</w:tbl>${wPara("", { spacingAfter: 160 })}`;
+}
+
+function wKpiLine(items) {
+  // Render KPI pairs as a compact two-column table (label/value) side by side isn't
+  // straightforward in plain OOXML without nested tables, so use a single row table instead.
+  const headers = items.map(i => i[0]);
+  const row = items.map(i => i[1]);
+  return wTable(headers, [row]);
+}
+
+function buildDocxBody() {
+  const p = state.project;
+  const disc = state.discovery;
+  const track = TRACKS.find(t => t.key === state.activeTrack);
+  const today = new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
+  let body = "";
+
+  // Cover + discovery
+  body += wPara("Engagement Scoping & Estimate", { bold: true, size: 32, color: "912121", spacingAfter: 40 });
+  body += wPara("Prepared " + today, { color: "595959", size: 18, spacingAfter: 200 });
+  body += wPara(p.project || "Untitled Engagement", { bold: true, size: 28, spacingAfter: 20 });
+  body += wPara(p.account || "", { color: "595959", size: 20, spacingAfter: 200 });
+  body += wTable(
+    ["Sales owner", "Sales engineer", "Scope approver", "Financial approver", "Anticipated start", "Legal approver"],
+    [[p.salesowner || "—", p.se || "—", p.scopeappr || "—", p.finappr || "—",
+      p.startdate ? fmtDate(new Date(p.startdate + "T00:00:00")) : "—", p.legalappr || "—"]]
+  );
+
+  const rollup = computeRollup();
+  body += wHeading("Engagement rollup");
+  body += wTable(
+    ["Service", "Price", "Cost", "Hours", "Margin"],
+    [
+      ...rollup.rows.map(r => [r.label + (r.included ? "" : " (excluded)"), fmtMoney(r.price), fmtMoney(r.cost), String(Math.round(r.hours)), r.price > 0 ? fmtPct(r.margin) : "—"]),
+      ["Total", fmtMoney(rollup.totalPrice), fmtMoney(rollup.totalCost), String(Math.round(rollup.totalHours)), fmtPct(rollup.totalMargin)],
+    ]
+  );
+
+  if (state.pdfOptions.discovery) {
+    const discCalc = computeDiscoveryDelivery();
+    const discApproval = marginApproval(discCalc.margin);
+    body += wHeading("Recommended track");
+    body += wPara(`Every engagement enters through paid discovery. Based on discovery findings, this proposal recommends the ${track ? track.label : "—"} track — ${track ? track.desc : ""}`, { size: 18, spacingAfter: 120 });
+    body += wKpiLine([
+      ["Discovery fee", fmtMoney(disc.fee)],
+      ["Sessions", String(disc.sessions)],
+      ["Credits toward", track ? track.creditsTo : "—"],
+      ["Status", disc.status],
+    ]);
+    body += wKpiLine([
+      ["Delivery cost", fmtMoney(discCalc.cost)],
+      ["Margin (target 60%)", fmtPct(discCalc.margin)],
+      ["Approval", discApproval.label],
+    ]);
+    body += wPara("Discovery is non-refundable but always credits forward against the client's chosen track. The fee is earned through delivery of the discovery report — not contingent on the client proceeding to any track.", { color: "595959", size: 16, spacingAfter: 240 });
+  }
+
+  // Project
+  const totals = computeProjectTotals();
+  if (state.pdfOptions.project && (totals.totalHours > 0 || totals.totalPrice > 0)) {
+    const approval = marginApproval(totals.margin);
+    const phaseSummary = computeActivePhaseSummary();
+    const range = computeProjectRange();
+    const isFixed = totals.mode === "fixed";
+    const segs = buildTimelinePhases();
+
+    body += wHeading("Project — Scoped Deliverable");
+    body += wPara("Pricing model: " + (isFixed ? "Fixed Bid" : "Time & Materials"), { size: 18, spacingAfter: 120 });
+    body += wKpiLine([
+      ["Project price", fmtMoney(totals.totalPrice)],
+      ["Project hours", Math.round(totals.totalHours).toLocaleString("en-US")],
+      ["Margin", fmtPct(totals.margin)],
+      ["Approval", approval.label],
+    ]);
+    body += wTable(
+      ["", "Low estimate", "High estimate"],
+      [
+        ["Cost", fmtMoney(range.costLow), fmtMoney(range.costHigh)],
+        ["Hours", Math.round(range.hoursLow).toLocaleString("en-US"), Math.round(range.hoursHigh).toLocaleString("en-US")],
+        ["Margin", fmtPct(range.marginAtCostLow), fmtPct(range.marginAtCostHigh)],
+      ]
+    );
+
+    body += wHeading("Estimate by phase");
+    body += wTable(
+      ["Phase", "Hours", "Price"],
+      [...phaseSummary.map(ph => [ph.label, String(Math.round(ph.hours)), fmtMoney(ph.price)]),
+       ["Total", String(Math.round(totals.totalHours)), fmtMoney(totals.totalPrice)]]
+    );
+
+    body += wHeading(isFixed ? "Deliverables" : "Project team");
+    if (isFixed) {
+      body += wTable(
+        ["Functionality", "Deliverable", "Phase", "Est. hours", "Fixed price"],
+        totals.lines.map(l => [l.name || "Untitled", l.deliverable || "", PHASES[PHASE_KEYS.indexOf(l.phase)] || "", String(Math.round(l.hours)), fmtMoney(l.price)])
+      );
+    } else {
+      body += wTable(
+        ["Role", "Rate class", "Hours", "Price/hr", "Line price"],
+        totals.lines.map(l => [l.role, l.rateClass, String(Math.round(l.totalHours)), "$" + l.price.toFixed(0), fmtMoney(l.linePrice)])
+      );
+    }
+
+    body += wHeading("Delivery timeline");
+    body += wTable(
+      ["Phase", "Start", "End", "Duration"],
+      segs.map(s => [s.label, fmtDate(s.start), fmtDate(s.end), s.weeks + (s.weeks === 1 ? " week" : " weeks")])
+    );
+    body += wPara(`P&B reflects ${state.phases.pb_sprints} sprints × ${state.phases.sprint_len} weeks. Statement of Work governs final scope, timeline, and acceptance criteria.`, { color: "595959", size: 16, spacingAfter: 240 });
+  }
+
+  // Managed Services
+  const mt = computeMsTotals();
+  if (state.pdfOptions.ms && mt.totalHours > 0) {
+    const mApproval = marginApproval(mt.margin);
+    body += wHeading("Managed Services — Subscription");
+    body += wPara(`Named engagement lead: ${state.ms.lead || "TBD"} · Cadence: ${state.ms.cadence} · QBR: ${state.ms.qbr} · Term: ${mt.months} months`, { size: 18, spacingAfter: 120 });
+    body += wKpiLine([
+      ["Monthly invoice", fmtMoney(mt.monthlyInvoice)],
+      ["Contract value", fmtMoney(mt.totalRevenue)],
+      ["Blended rate", "$" + mt.blendedRate.toFixed(0) + "/hr"],
+      ["Margin", fmtPct(mt.margin)],
+    ]);
+    body += wHeading("Delivery mix");
+    body += wTable(
+      ["Tier", "Hrs/wk", "Rate/hr", "Total hours", "Contract revenue"],
+      mt.tiers.filter(t => t.hrsPerWeek > 0).map(t => [t.label, String(t.hrsPerWeek), "$" + t.rate.toFixed(0), String(Math.round(t.totalHours)), fmtMoney(t.revenue)])
+    );
+    body += wPara(`Approval status: ${mApproval.label}. Discovery fee credits toward the first month of subscription. Renewal and expansion are driven by quarterly business reviews.`, { color: "595959", size: 16, spacingAfter: 240 });
+  }
+
+  // Ad-Hoc T&M
+  const tt = computeTmTotals();
+  if (state.pdfOptions.tm && tt.totalHours > 0) {
+    const tApproval = marginApproval(tt.margin);
+    const tiersUsed = Array.from(new Set(tt.lines.map(l => slaLabelFor(l.sla)))).join(", ");
+    body += wHeading("Ad-Hoc T&M — Client Portal");
+    body += wPara(`SLA tiers in this quote: ${tiersUsed || "Standard"} · Est. requests/month: ${state.tm.requests} · Fulfilled from the shared resource pool, no dedicated resource assigned.`, { size: 18, spacingAfter: 120 });
+    body += wKpiLine([
+      ["Block price", fmtMoney(tt.totalPrice)],
+      ["Block hours", Math.round(tt.totalHours).toLocaleString("en-US")],
+      ["Margin", fmtPct(tt.margin)],
+      ["Approval", tApproval.label],
+    ]);
+    body += wHeading("Estimated lines");
+    body += wTable(
+      ["Rate class", "SLA tier", "Hours", "Price/hr", "Line price"],
+      tt.lines.map(l => [l.rateClass, slaLabelFor(l.sla), String(Math.round(l.hours)), "$" + l.price.toFixed(0), fmtMoney(l.linePrice)])
+    );
+    body += wPara(`This track replaces all unstructured T&M and ad-hoc engagements. Any exception requires DC Leadership approval${state.tm.approval ? " (" + state.tm.approval + ")" : ""}. Discovery fee credits toward the SLA tier setup fee or first queue credit.`, { color: "595959", size: 16, spacingAfter: 240 });
+  }
+
+  body += wPara(`Demand Chain — Confidential — © ${new Date().getFullYear()} Demand Chain | www.demandchain.com`, { color: "8a8a8a", size: 14 });
+
+  return body;
+}
+
+async function exportWord() {
+  if (typeof JSZip === "undefined") {
+    alert("Word export needs an internet connection to load a small helper library (JSZip) — please check your connection and try again.");
+    return;
+  }
+  const btn = document.getElementById("btnExportWord") || document.getElementById("btnExportWord2");
+  const origText = btn ? btn.textContent : null;
+  if (btn) btn.textContent = "Building…";
+
+  try {
+    const body = buildDocxBody();
+    const documentXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+<w:body>
+${body}
+<w:sectPr><w:pgSz w:w="12240" w:h="15840"/><w:pgMar w:top="1080" w:right="1080" w:bottom="1080" w:left="1080" w:header="720" w:footer="720" w:gutter="0"/></w:sectPr>
+</w:body>
+</w:document>`;
+
+    const contentTypesXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">
+<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>
+<Default Extension="xml" ContentType="application/xml"/>
+<Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/>
+</Types>`;
+
+    const relsXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/>
+</Relationships>`;
+
+    const zip = new JSZip();
+    zip.file("[Content_Types].xml", contentTypesXml);
+    zip.file("_rels/.rels", relsXml);
+    zip.file("word/document.xml", documentXml);
+
+    const blob = await zip.generateAsync({ type: "blob", mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    const nameBase = (state.project.project || "engagement-estimate").replace(/[^a-z0-9\-_ ]/gi, "").trim().replace(/\s+/g, "_") || "engagement-estimate";
+    a.href = url;
+    a.download = nameBase + ".docx";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 2000);
+  } catch (e) {
+    console.error("Word export failed", e);
+    alert("Word export failed — please try again, or use the PDF export instead.");
+  } finally {
+    if (btn && origText) btn.textContent = origText;
+  }
+}
+
+/* ============================== Init ================================ */
+
+async function init() {
+  await loadState();
+  bindProjectFields();
+  setupTabs();
+  renderAll();
+
+  // Commits a weekly-timeline drag: the drag itself only patches lightweight
+  // totals for responsiveness (see paintWeeklyCell); releasing the mouse anywhere
+  // on the page triggers the real recalculation for the row that was painted.
+  document.addEventListener("mouseup", () => {
+    const table = document.getElementById("weeklyGridTable");
+    if (table) table.classList.remove("wg-dragging");
+    if (weeklyDrag) {
+      const rowIdx = weeklyDrag.rowIdx;
+      weeklyDrag = null;
+      const weeks = buildProjectWeeks();
+      const t = state.team[rowIdx];
+      if (t) {
+        recomputePhaseTotalsFromWeekly(t, weeks);
+        saveState();
+        renderAll({ skipWeekly: true });
+      }
+    }
+    clearWeeklyHighlights();
+  });
+
+  document.getElementById("btnAddResource").addEventListener("click", () => {
+    state.team.push({ role: "New resource", rateClass: state.rates[0].name, planning: 0, discovery: 0, pb: 0, deploy: 0, wrapup: 0 });
+    renderAll(); saveState();
+  });
+  document.getElementById("btnAddFixedLine").addEventListener("click", () => {
+    state.fixedLines.push({ name: "", deliverable: "", phase: "pb", hours: 0, rateClass: state.rates[0].name, price: 0 });
+    renderAll(); saveState();
+  });
+  document.getElementById("btnRatesDefault").addEventListener("click", () => {
+    state.rates = defaultState().rates;
+    renderAll(); saveState();
+  });
+  document.getElementById("btnAddTmLine").addEventListener("click", () => {
+    state.tm.lines.push({ rateClass: state.rates[0].name, sla: "1", hours: 0 });
+    renderAll(); saveState();
+  });
+  document.getElementById("btnReset").addEventListener("click", () => {
+    if (confirm("Reset all project data? This cannot be undone.")) {
+      state = defaultState();
+      renderAll(); saveState();
+      bindProjectFields();
+    }
+  });
+  document.getElementById("btnSave").addEventListener("click", async () => {
+    await saveState();
+    const btn = document.getElementById("btnSave");
+    const orig = btn.textContent;
+    btn.textContent = "Saved ✓";
+    setTimeout(() => btn.textContent = orig, 1200);
+  });
+  document.getElementById("btnExport").addEventListener("click", exportPdf);
+  document.getElementById("btnExport2").addEventListener("click", exportPdf);
+  document.getElementById("btnExportWord").addEventListener("click", exportWord);
+  document.getElementById("btnExportWord2").addEventListener("click", exportWord);
+
+  ["ph_planning_wk", "ph_discovery_wk", "ph_pb_sprints", "ph_sprint_len", "ph_deploy_wk", "ph_wrapup_wk"].forEach(id => {
+    const map = {
+      ph_planning_wk: "planning_wk", ph_discovery_wk: "discovery_wk", ph_pb_sprints: "pb_sprints",
+      ph_sprint_len: "sprint_len", ph_deploy_wk: "deploy_wk", ph_wrapup_wk: "wrapup_wk",
+    };
+    const input = document.getElementById(id);
+    input.value = state.phases[map[id]];
+    input.addEventListener("input", () => {
+      state.phases[map[id]] = Number(input.value) || 0;
+      renderAll(); saveState();
+    });
+  });
+
+  // Estimate range bindings
+  const rangeMap = {
+    range_cost_low: "costLowPct", range_cost_high: "costHighPct",
+    range_hours_low: "hoursLowPct", range_hours_high: "hoursHighPct",
+  };
+  Object.entries(rangeMap).forEach(([id, key]) => {
+    const input = document.getElementById(id);
+    input.addEventListener("input", () => {
+      state.projectRange[key] = Number(input.value) || 0;
+      renderAll(); saveState();
+    });
+  });
+
+  // Managed Services bindings
+  document.getElementById("ms_lead").addEventListener("input", e => { state.ms.lead = e.target.value; saveState(); });
+  document.getElementById("ms_cadence").addEventListener("change", e => { state.ms.cadence = e.target.value; saveState(); });
+  document.getElementById("ms_months").addEventListener("change", e => {
+    state.ms.months = e.target.value;
+    renderAll(); saveState();
+  });
+  document.getElementById("ms_months_custom").addEventListener("input", e => {
+    state.ms.monthsCustom = Number(e.target.value) || 12;
+    renderAll(); saveState();
+  });
+  document.getElementById("ms_qbr").addEventListener("change", e => { state.ms.qbr = e.target.value; saveState(); });
+
+  // Ad-Hoc T&M bindings
+  document.getElementById("tm_requests").addEventListener("input", e => { state.tm.requests = Number(e.target.value) || 0; saveState(); });
+  document.getElementById("tm_approval").addEventListener("input", e => { state.tm.approval = e.target.value; saveState(); });
+
+  // PDF export option bindings
+  const pdfOptMap = { pdf_opt_discovery: "discovery", pdf_opt_project: "project", pdf_opt_ms: "ms", pdf_opt_tm: "tm" };
+  Object.entries(pdfOptMap).forEach(([id, key]) => {
+    const cb = document.getElementById(id);
+    cb.checked = !!state.pdfOptions[key];
+    cb.addEventListener("change", () => { state.pdfOptions[key] = cb.checked; saveState(); });
+  });
+}
+
+init();
+
+</script>
+</body>
+</html>
